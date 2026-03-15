@@ -240,9 +240,15 @@ body.blog-page .blog-content-card {
 
 /* Blog Hero — светлый фон как в секции контактов */
 .blog-hero {
-  background: 
+  background-image:
     linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.35) 100%),
-    url('../../../img/bg-logo-pattern.JPG') center/cover no-repeat;
+    image-set(
+      url('../../../img/bg-logo-pattern.webp') type('image/webp'),
+      url('../../../img/bg-logo-pattern.JPG') type('image/jpeg')
+    );
+  background-size: auto, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
   background-color: var(--color-bg-lighter);
   padding: clamp(8rem, 15vh, 12rem) clamp(1.5rem, 5vw, 6rem) clamp(4rem, 8vh, 6rem);
   padding-top: clamp(8rem, 15vh, 12rem);
@@ -666,10 +672,10 @@ body.blog-page .blog-content-card {
   box-sizing: border-box;
 }
 
-/* Отступы как у панели; сверху — отступ до divider */
+/* Отступы как у панели; сверху — равный отступ как снизу дивайдера */
 .blog-content-card .preview-section {
-  padding: 0 clamp(var(--spacing-xl), 5vw, var(--spacing-2xl)) var(--spacing-2xl);
-  padding-top: 0; /* отступ сверху задаёт .blog-divider */
+  padding: var(--blog-divider-gap) clamp(var(--spacing-xl), 5vw, var(--spacing-2xl)) var(--spacing-2xl);
+  padding-top: var(--blog-divider-gap); /* явный отступ сверху = отступу снизу дивайдера */
 }
 
 /* Резиновая сетка: 3 колонки по ширине; 2 статьи = две по 50%, 5 = 3+2 растянутые */
@@ -871,9 +877,7 @@ body.blog-page .blog-content-card {
 .blog-content-card .blog-filter-section {
   max-width: 100%;
   margin: 0;
-  padding: 0 clamp(var(--spacing-xl), 5vw, var(--spacing-2xl)) 0;
-  padding-bottom: 0;
-  padding-top: 0; /* панель у самого верха карточки */
+  padding: 0; /* панель занимает всю ширину карточки — углы совпадают */
   position: relative;
   z-index: 1;
   background: transparent;
@@ -892,7 +896,7 @@ body.blog-page .blog-content-card {
   display: block;
   width: 100%;
   height: 2px;
-  margin: var(--blog-divider-gap) 0 var(--blog-divider-gap);
+  margin: 0 0 var(--blog-divider-gap); /* только нижний отступ; верхний задаёт padding-top preview-section */
   padding: 0 var(--blog-divider-padding);
   box-sizing: border-box;
   position: relative;
@@ -936,7 +940,7 @@ body.blog-page .blog-content-card {
   gap: 1.5rem;
   padding: 1rem clamp(1.5rem, 4vw, 2.5rem);
   background: var(--color-primary);
-  border-radius: 20px;
+  border-radius: 20px 20px 0 0; /* верхние углы совпадают с blog-content-card */
   margin: 0;
   box-shadow: var(--neo-inset-sm);
   position: sticky;
@@ -1311,10 +1315,7 @@ body.blog-page .blog-content-card {
     max-width: 100%;
   }
   
-  /* Секция фильтра без боковых отступов — как у карточек, панель на ширину карточек */
-  .blog-content-card .blog-filter-section {
-    padding: 0;
-  }
+  /* Мобиль: filter-container на всю ширину карточки, border-radius сохраняется */
   .filter-container {
     flex-direction: column !important;
     align-items: stretch;

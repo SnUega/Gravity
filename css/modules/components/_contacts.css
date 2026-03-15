@@ -685,6 +685,7 @@
   .contacts-section {
     padding: 40px 5%;
     background: linear-gradient(to bottom, #404048 0%, #3a3a40 55%, #404048 100%);
+    overflow: visible; /* разрешаем карте/контенту занимать нужную высоту */
   }
 
   /* Внутри вдавленности формы — снова темнее (контраст с секцией) */
@@ -717,7 +718,9 @@
   }
 
   .map-contacts .contact-info {
-    min-height: auto;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
     max-width: 100%;
     gap: 1rem;
     padding: 1.25rem;
@@ -772,12 +775,20 @@
     height: 18px;
   }
 
-  /* Map: полная ширина, без overflow */
+  /* Map: полная ширина, без overflow; min-height — fallback если JS-анимация не сработала */
   #map-wrapper {
     width: 100% !important;
     max-width: 100% !important;
     border-radius: 14px;
     overflow: hidden !important;
+    min-height: 260px; /* гарантируем видимость карты на мобильных */
+  }
+
+  /* Если JS выставил height: 0 и анимация не сработала — fallback */
+  #map-wrapper[style*="height: 0"],
+  #map-wrapper[style*="height:0"] {
+    height: 260px !important;
+    min-height: 260px !important;
   }
 
   /* Форма: чекбокс и лейбл внутри блока формы, без переполнения */
