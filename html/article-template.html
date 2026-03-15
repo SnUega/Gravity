@@ -6,6 +6,98 @@
   <meta name="description" content="[ARTICLE_DESCRIPTION] - Блог Медицинского центра Притяжение">
   <meta name="keywords" content="[ARTICLE_TAGS], косметология, уход за кожей, медицинский центр">
   <title>[ARTICLE_TITLE] | Медицинский центр "Притяжение"</title>
+
+  <!-- Canonical -->
+  <link rel="canonical" href="[CANONICAL_URL]">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="[ARTICLE_TITLE] | Медицинский центр «Притяжение»">
+  <meta property="og:description" content="[ARTICLE_DESCRIPTION]">
+  <meta property="og:url" content="[CANONICAL_URL]">
+  <meta property="og:image" content="[FEATURED_IMAGE_URL]">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="Медицинский центр «Притяжение»">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="article:published_time" content="[ARTICLE_DATE]">
+  <meta property="article:modified_time" content="[ARTICLE_DATE]">
+  <meta property="article:author" content="[AUTHOR_NAME]">
+  <meta property="article:section" content="[ARTICLE_CATEGORY]">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="[ARTICLE_TITLE] | Медицинский центр «Притяжение»">
+  <meta name="twitter:description" content="[ARTICLE_DESCRIPTION]">
+  <meta name="twitter:image" content="[FEATURED_IMAGE_URL]">
+
+  <!-- JSON-LD: Article -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "[ARTICLE_TITLE]",
+    "description": "[ARTICLE_DESCRIPTION]",
+    "url": "[CANONICAL_URL]",
+    "datePublished": "[ARTICLE_DATE]",
+    "dateModified": "[ARTICLE_DATE]",
+    "author": {
+      "@type": "Person",
+      "name": "[AUTHOR_NAME]",
+      "jobTitle": "[AUTHOR_ROLE]"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Медицинский центр «Притяжение»",
+      "url": "https://gravity-clinic.ru",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://gravity-clinic.ru/img/full-logo.PNG"
+      }
+    },
+    "image": {
+      "@type": "ImageObject",
+      "url": "[FEATURED_IMAGE_URL]",
+      "width": 1200,
+      "height": 630
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "[CANONICAL_URL]"
+    },
+    "keywords": "[ARTICLE_TAGS]",
+    "articleSection": "[ARTICLE_CATEGORY]",
+    "inLanguage": "ru"
+  }
+  </script>
+
+  <!-- JSON-LD: BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": "https://gravity-clinic.ru/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Блог",
+        "item": "https://gravity-clinic.ru/html/blog.html"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "[ARTICLE_TITLE]",
+        "item": "[CANONICAL_URL]"
+      }
+    ]
+  }
+  </script>
   
   <link rel="icon" type="image/png" sizes="32x32" href="../img/fav/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="../img/fav/favicon-16x16.png">

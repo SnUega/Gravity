@@ -68,46 +68,46 @@
 .service-card:nth-child(1) {
   background-image:
     linear-gradient(to bottom, rgba(18,18,22,0.52) 0%, rgba(18,18,22,0.28) 40%, rgba(18,18,22,0.62) 100%),
-    url('../../img/injections-card.JPG');
-  background-size: cover;
-  background-position: center;
+    image-set(url('../../img/injections-card.webp') type('image/webp'), url('../../img/injections-card.JPG') type('image/jpeg'));
+  background-size: auto, cover;
+  background-position: center, center;
 }
 .service-card:nth-child(2) {
   background-image:
     linear-gradient(to bottom, rgba(18,18,22,0.52) 0%, rgba(18,18,22,0.28) 40%, rgba(18,18,22,0.62) 100%),
-    url('../../img/cosmetology-card.JPG');
-  background-size: cover;
-  background-position: center;
+    image-set(url('../../img/cosmetology-card.webp') type('image/webp'), url('../../img/cosmetology-card.JPG') type('image/jpeg'));
+  background-size: auto, cover;
+  background-position: center, center;
 }
 .service-card:nth-child(3) {
   background-image:
     linear-gradient(to bottom, rgba(18,18,22,0.52) 0%, rgba(18,18,22,0.28) 40%, rgba(18,18,22,0.62) 100%),
-    url('../../img/massage-card.JPG');
-  background-size: cover;
-  background-position: center;
+    image-set(url('../../img/massage-card.webp') type('image/webp'), url('../../img/massage-card.JPG') type('image/jpeg'));
+  background-size: auto, cover;
+  background-position: center, center;
 }
 
 /* Hover — изображение проступает сильнее */
 .service-card:nth-child(1):hover {
   background-image:
     linear-gradient(to bottom, rgba(18,18,22,0.30) 0%, rgba(18,18,22,0.10) 40%, rgba(18,18,22,0.45) 100%),
-    url('../../img/injections-card.JPG');
-  background-size: cover;
-  background-position: center;
+    image-set(url('../../img/injections-card.webp') type('image/webp'), url('../../img/injections-card.JPG') type('image/jpeg'));
+  background-size: auto, cover;
+  background-position: center, center;
 }
 .service-card:nth-child(2):hover {
   background-image:
     linear-gradient(to bottom, rgba(18,18,22,0.30) 0%, rgba(18,18,22,0.10) 40%, rgba(18,18,22,0.45) 100%),
-    url('../../img/cosmetology-card.JPG');
-  background-size: cover;
-  background-position: center;
+    image-set(url('../../img/cosmetology-card.webp') type('image/webp'), url('../../img/cosmetology-card.JPG') type('image/jpeg'));
+  background-size: auto, cover;
+  background-position: center, center;
 }
 .service-card:nth-child(3):hover {
   background-image:
     linear-gradient(to bottom, rgba(18,18,22,0.30) 0%, rgba(18,18,22,0.10) 40%, rgba(18,18,22,0.45) 100%),
-    url('../../img/massage-card.JPG');
-  background-size: cover;
-  background-position: center;
+    image-set(url('../../img/massage-card.webp') type('image/webp'), url('../../img/massage-card.JPG') type('image/jpeg'));
+  background-size: auto, cover;
+  background-position: center, center;
 }
 
 .service-card-content {

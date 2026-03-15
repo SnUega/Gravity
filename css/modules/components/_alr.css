@@ -168,7 +168,7 @@
   left: 0;
   right: 0;
   height: 45%;
-  background-image: url('../../img/bg-logo-pattern.JPG');
+  background-image: image-set(url('../../img/bg-logo-pattern.webp') type('image/webp'), url('../../img/bg-logo-pattern.JPG') type('image/jpeg'));
   background-size: 180px;
   background-repeat: repeat;
   opacity: 0.055;

@@ -68,7 +68,7 @@
 .sunken-pattern-layer {
   position: absolute;
   inset: -30%;          /* oversized so parallax shift stays within */
-  background-image: url('../../img/bg-logo-pattern.JPG');
+  background-image: image-set(url('../../img/bg-logo-pattern.webp') type('image/webp'), url('../../img/bg-logo-pattern.JPG') type('image/jpeg'));
   background-size: 300px;
   background-repeat: repeat;
   opacity: 0.028;
