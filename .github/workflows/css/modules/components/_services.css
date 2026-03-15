@@ -1,0 +1,354 @@
+/* ============================================
+   Services Section Component
+   ============================================ */
+
+#services-section {
+  position: relative;
+  height: 100vh;
+  background: var(--color-bg-dark, #2E2E33);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Широкие экраны: фон секции чуть светлее (на пару тонов) */
+@media (min-width: 769px) {
+  #services-section {
+    background: #36363b;
+  }
+}
+
+.services-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+  height: 100%;
+  gap: 2px;
+  background: #1e1e22;
+}
+
+.service-card {
+  background-color: var(--services-card-bg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  padding: 40px 30px 140px 30px;
+  will-change: transform;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: none;
+}
+
+/* Объёмные края панели */
+.service-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid rgba(0,0,0,0.30);
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 0.35s ease;
+}
+
+.service-card:hover::after {
+  opacity: 0.5;
+}
+
+/* Фоновые изображения для карточек услуг */
+/* Оверлей ~45% — фото хорошо видно, текст читается */
+.service-card:nth-child(1) {
+  background-image:
+    linear-gradient(to bottom, rgba(18,18,22,0.52) 0%, rgba(18,18,22,0.28) 40%, rgba(18,18,22,0.62) 100%),
+    url('../../img/injections-card.JPG');
+  background-size: cover;
+  background-position: center;
+}
+.service-card:nth-child(2) {
+  background-image:
+    linear-gradient(to bottom, rgba(18,18,22,0.52) 0%, rgba(18,18,22,0.28) 40%, rgba(18,18,22,0.62) 100%),
+    url('../../img/cosmetology-card.JPG');
+  background-size: cover;
+  background-position: center;
+}
+.service-card:nth-child(3) {
+  background-image:
+    linear-gradient(to bottom, rgba(18,18,22,0.52) 0%, rgba(18,18,22,0.28) 40%, rgba(18,18,22,0.62) 100%),
+    url('../../img/massage-card.JPG');
+  background-size: cover;
+  background-position: center;
+}
+
+/* Hover — изображение проступает сильнее */
+.service-card:nth-child(1):hover {
+  background-image:
+    linear-gradient(to bottom, rgba(18,18,22,0.30) 0%, rgba(18,18,22,0.10) 40%, rgba(18,18,22,0.45) 100%),
+    url('../../img/injections-card.JPG');
+  background-size: cover;
+  background-position: center;
+}
+.service-card:nth-child(2):hover {
+  background-image:
+    linear-gradient(to bottom, rgba(18,18,22,0.30) 0%, rgba(18,18,22,0.10) 40%, rgba(18,18,22,0.45) 100%),
+    url('../../img/cosmetology-card.JPG');
+  background-size: cover;
+  background-position: center;
+}
+.service-card:nth-child(3):hover {
+  background-image:
+    linear-gradient(to bottom, rgba(18,18,22,0.30) 0%, rgba(18,18,22,0.10) 40%, rgba(18,18,22,0.45) 100%),
+    url('../../img/massage-card.JPG');
+  background-size: cover;
+  background-position: center;
+}
+
+.service-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex-grow: 1;
+  justify-content: center;
+}
+
+.service-number {
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: var(--font-weight-light);
+  color: var(--color-accent, #8D5A97);
+  margin-bottom: 20px;
+  font-family: 'Unbounded', Arial, Helvetica, sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.service-title {
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-primary, #F5F0EB);
+  margin-bottom: 15px;
+  font-family: 'Unbounded', Arial, Helvetica, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.service-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 28px 12px 24px;
+  /* На фото — вдавленная матовая пилюля с blur */
+  background: rgba(30,30,34,0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--color-text-primary, #F5F0EB);
+  text-decoration: none;
+  font-family: 'Unbounded', Arial, Helvetica, sans-serif;
+  font-size: var(--font-size-xs);
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  border: none;
+  border-radius: 100px;
+  position: relative;
+  transition: all 0.2s ease;
+  z-index: 5;
+  box-shadow:
+    inset 2px 2px 6px rgba(0,0,0,0.6),
+    inset -2px -2px 6px rgba(80,80,90,0.15),
+    inset 0 1px 0 rgba(0,0,0,0.35),
+    inset 0 -1px 0 rgba(255,255,255,0.05);
+}
+
+.service-btn::after {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.55;
+  transition: width 0.25s ease, opacity 0.25s ease;
+  flex-shrink: 0;
+}
+
+.service-btn:hover {
+  color: var(--color-accent, #8D5A97);
+  background: rgba(20,20,24,0.7);
+  box-shadow:
+    inset 3px 3px 8px rgba(0,0,0,0.7),
+    inset -3px -3px 8px rgba(80,80,90,0.1),
+    inset 0 1px 0 rgba(0,0,0,0.4),
+    inset 0 -1px 0 rgba(141,90,151,0.1);
+}
+
+.service-btn:hover::after {
+  width: 24px;
+  opacity: 1;
+}
+
+.service-btn:active {
+  box-shadow:
+    inset 4px 4px 10px rgba(0,0,0,0.75),
+    inset -4px -4px 10px rgba(80,80,90,0.08);
+}
+
+/* Service card hover — AO shadows из ALR правила */
+.service-card:nth-child(1):hover {
+  transform: translateY(-3px) translateX(1px) scale(1.012);
+  z-index: 10;
+}
+
+.service-card:nth-child(2):hover {
+  transform: translateY(-3px) scale(1.012);
+  z-index: 10;
+}
+
+.service-card:nth-child(3):hover {
+  transform: translateY(-3px) translateX(-1px) scale(1.012);
+  z-index: 10;
+}
+
+.service-card:nth-child(1):hover .service-card-content,
+.service-card:nth-child(2):hover .service-card-content,
+.service-card:nth-child(3):hover .service-card-content {
+  transform: scale(1.05);
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Mobile & Tablet Portrait - Swipe paging */
+@media (max-width: 768px) {
+  #services-section {
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .services-container {
+    display: flex;
+    height: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overscroll-behavior-x: contain;
+  }
+
+  .services-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .service-card {
+    min-width: 100vw;
+    height: 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    border-radius: 0;
+    flex-shrink: 0;
+    padding: 28px 24px 120px 24px;
+    justify-content: center;
+    position: relative;
+  }
+
+  .service-number {
+    font-size: clamp(20px, calc(var(--index) * 3.0), 40px);
+    margin-bottom: calc(var(--index) * 1.0);
+  }
+
+  .service-title {
+    font-size: clamp(14px, calc(var(--index) * 1.4), 24px);
+    margin-bottom: calc(var(--index) * 0.8);
+    min-height: 2.2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .service-btn::before {
+    width: 68px;
+    height: 64px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) and (orientation: portrait) {
+  #services-section {
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .services-container {
+    display: flex;
+    height: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overscroll-behavior-x: contain;
+  }
+
+  .services-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .service-card {
+    min-width: 100vw;
+    height: 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    border-radius: 0;
+    flex-shrink: 0;
+    padding: 28px 24px 120px 24px;
+    justify-content: center;
+    position: relative;
+  }
+
+  .service-number {
+    font-size: clamp(24px, calc(var(--index) * 3.5), 48px);
+    margin-bottom: calc(var(--index) * 1.0);
+  }
+
+  .service-title {
+    font-size: clamp(16px, calc(var(--index) * 1.6), 28px);
+    margin-bottom: calc(var(--index) * 0.8);
+    min-height: 2.2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .service-btn::before {
+    width: 68px;
+    height: 64px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+  #services-section .service-number {
+    font-size: clamp(24px, calc(var(--index) * 2.8), 40px);
+  }
+
+  #services-section .service-title {
+    font-size: clamp(14px, calc(var(--index) * 1.4), 22px);
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) {
+  .service-number {
+    font-size: clamp(32px, calc(var(--index) * 3.2), 56px);
+  }
+
+  .service-title {
+    font-size: clamp(18px, calc(var(--index) * 1.6), 28px);
+  }
+}
+

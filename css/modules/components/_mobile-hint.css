@@ -1,0 +1,84 @@
+/* ============================================
+   Mobile Hint Component (Unified)
+   ============================================ */
+/* Объединенный компонент для .alr-mobile-hint и .services-mobile-hint */
+
+.mobile-hint-base,
+.alr-mobile-hint,
+.services-mobile-hint {
+  display: none;
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  pointer-events: none;
+  align-items: center;
+  gap: 12px;
+}
+
+.hint-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.hint-arrow {
+  font-size: 18px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .mobile-hint-base,
+  .alr-mobile-hint,
+  .services-mobile-hint {
+    display: flex;
+  }
+  
+  .services-mobile-hint .hint-text {
+    font-size: 14px;
+  }
+  
+  .services-mobile-hint .hint-arrow {
+    font-size: 18px;
+  }
+}
+
+/* ALR specific adjustments */
+@media (max-width: 768px) {
+  .alr-mobile-hint {
+    display: block;
+    top: 20%;
+  }
+}
+
+
+/* ============================================
+   Arrow pulse animations — restored
+   ============================================ */
+@keyframes pulseLeft {
+  0%, 100% { transform: translateX(0); opacity: 0.6; }
+  50%       { transform: translateX(-5px); opacity: 1; }
+}
+
+@keyframes pulseRight {
+  0%, 100% { transform: translateX(0); opacity: 0.6; }
+  50%       { transform: translateX(5px); opacity: 1; }
+}
+
+.hint-arrow:first-child,
+#left-arrow {
+  animation: pulseLeft 1.8s ease-in-out infinite;
+  display: inline-flex;
+  align-items: center;
+}
+
+.hint-arrow:last-child,
+#right-arrow {
+  animation: pulseRight 1.8s ease-in-out infinite;
+  display: inline-flex;
+  align-items: center;
+}

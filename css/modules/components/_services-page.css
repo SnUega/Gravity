@@ -1,0 +1,2207 @@
+/* ============================================
+   Services Page Styles
+   Split-layout: Hero (fixed) + Services List (scroll)
+   ============================================ */
+
+/* ============================================
+   Block clicks on page content when menu is open
+   ============================================ */
+body.lock-scroll .services-page-layout,
+body.lock-scroll .services-list-wrapper,
+body.lock-scroll .breadcrumbs,
+body.lock-scroll .accordion-item {
+  pointer-events: none;
+  user-select: none;
+}
+
+body.lock-scroll .navc-menu,
+body.lock-scroll .navc-burger {
+  pointer-events: auto;
+}
+
+/* ============================================
+   Breadcrumbs Navigation
+   ============================================ */
+.breadcrumbs {
+  position: absolute;
+  top: 0;
+  left: 30%; /* Выравниваем с правой частью */
+  right: 0;
+  z-index: 10; /* Below header (z-index: 51) */
+  padding: clamp(2rem, 4vw, 4rem);
+  padding-top: 6.5rem; /* Space for fixed header */
+  padding-bottom: 1rem;
+  background: var(--color-primary);
+  transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1), width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.services-page .breadcrumbs {
+  background: #242429;
+}
+
+/* Когда hero скрывается, хлебные крошки расширяются */
+body.services-page.contacts-visible .breadcrumbs {
+  left: 0;
+  width: 100%;
+}
+
+.breadcrumbs-list {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+.breadcrumbs-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.breadcrumbs-item:not(:last-child)::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpath d='M9 18l6-6-6-6'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+}
+
+.breadcrumbs-link {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+.breadcrumbs-link:hover {
+  color: var(--color-accent);
+}
+
+.breadcrumbs-link--home {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.breadcrumbs-link--home svg {
+  width: 16px;
+  height: 16px;
+}
+
+.breadcrumbs-current {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* Main Layout Container — градиент как у блога: сверху темнее, внизу #2E2E33 (безшовно с контактами) */
+.services-page {
+  background: linear-gradient(
+    to bottom,
+    var(--color-bg-darker) 0%,
+    var(--color-bg-light) 55%,
+    #2E2E33 100%
+  );
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  min-height: 100vh;
+}
+
+/* Широкие экраны: фоны секций чуть светлее (на пару тонов); низ над контактами #2E2E33 */
+@media (min-width: 769px) {
+  .services-page {
+    background: linear-gradient(to bottom, #2b2b30 0%, #36363b 55%, #2E2E33 100%);
+  }
+}
+
+.services-page-layout {
+  display: flex;
+  position: relative;
+  gap: 0;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  /* Плавное изменение margin-left синхронно с анимацией скрытия hero */
+  transition: margin-left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Когда контакты появляются, layout меняется */
+body.services-page main.services-page-layout:has(~ #revealWrap) {
+  margin-bottom: 0;
+}
+
+/* ============================================
+   Hero Section (Left - Fixed)
+   ============================================ */
+.services-hero {
+  position: relative; /* Базовое позиционирование, на десктопе будет fixed */
+  flex: 0 0 30%; /* Фиксированная ширина 30% */
+  width: 30%;
+  height: 100vh;
+  max-height: 100vh; /* Ограничиваем максимальную высоту */
+  background: linear-gradient(135deg, rgba(46, 46, 51, 0.55) 0%, rgba(30, 30, 35, 0.6) 50%, rgba(20, 20, 24, 0.65) 100%), url('../../../img/bg-logo-pattern.JPG') center / cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vw, 5rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  align-self: flex-start;
+  /* Анимация "шторки" - hero уезжает влево при появлении контактов */
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, flex 0.5s cubic-bezier(0.4, 0, 0.2, 1), width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  /* GPU acceleration для плавных анимаций */
+  will-change: transform, opacity, width;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  /* Скрываем скроллбар */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE и Edge */
+}
+
+.services-hero::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.services-hero.hero-hiding {
+  transform: translateX(-100%);
+  opacity: 0;
+  pointer-events: none;
+  flex: 0 0 0;
+  width: 0;
+  min-width: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Контент hero анимируется синхронно с hero - "уплывает" и "выплывает" */
+.services-hero.hero-hiding .services-hero-content {
+  opacity: 0;
+  transform: translateX(-20px);
+  pointer-events: none;
+}
+
+/* На десктопе когда hero скрывается, убираем margin-left у layout */
+@media (min-width: 1025px) {
+  body.services-page.contacts-visible .services-page-layout {
+    margin-left: 0;
+  }
+}
+
+/* На планшетах в горизонтали когда hero скрывается, убираем margin-left у layout */
+@media (min-width: 1024px) and (max-width: 1024px) and (orientation: landscape) {
+  body.services-page.contacts-visible .services-page-layout {
+    margin-left: 0;
+  }
+}
+
+/* Планшеты в горизонтали - оставляем для корректной работы hero */
+@media (orientation: landscape) and (min-width: 1024px) and (max-width: 1024px) {
+  body.services-page.contacts-visible .services-page-layout {
+    margin-left: 0;
+  }
+}
+
+/* Decorative elements */
+.services-hero::before {
+  content: "";
+  position: absolute;
+  top: -30%;
+  right: -20%;
+  width: 80%;
+  height: 80%;
+  background: radial-gradient(ellipse, rgba(141, 90, 151, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.services-hero::after {
+  content: "";
+  position: absolute;
+  bottom: -20%;
+  left: -10%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(ellipse, rgba(69, 196, 249, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Hero Content */
+.services-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  box-sizing: border-box;
+  /* Анимируем контент синхронно с hero */
+  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.services-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(141, 90, 151, 0.2);
+  border: 1px solid rgba(141, 90, 151, 0.3);
+  border-radius: 2rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  margin-bottom: 1.5rem;
+}
+
+.services-hero-badge svg {
+  width: 16px;
+  height: 16px;
+}
+
+.services-hero-title {
+  font-size: clamp(1.125rem, 2.4vw, 2.15rem);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-white);
+  line-height: 1.15;
+  margin-bottom: 1.5rem;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
+}
+
+.services-hero-title span {
+  display: block;
+  background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+.services-hero-description {
+  font-size: var(--font-size-lg);
+  color: rgba(255, 255, 255, 0.7);
+  line-height: var(--line-height-relaxed);
+  max-width: 100%;
+  margin-bottom: 2.5rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Hero Stats */
+.services-hero-stats {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.stat-item {
+  text-align: left;
+}
+
+.stat-value {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-white);
+  line-height: 1;
+}
+
+.stat-value span {
+  color: var(--color-accent);
+}
+
+.stat-label {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+/* Back Button — glassmorphism на основе неоморфизма */
+.services-hero-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: rgba(245, 240, 235, 0.85);
+  text-decoration: none;
+  font-size: 0.62rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  transition: all 0.3s ease;
+  padding: 0.65rem 1.1rem 0.65rem 0.85rem;
+  margin-top: 1rem;
+  border: none;
+  border-radius: 12px;
+  background: rgba(46, 46, 51, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--neo-raised-sm);
+  position: relative;
+}
+
+.services-hero-back::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border-top: 1px solid var(--neo-border-t);
+  border-left: 1px solid var(--neo-border-l);
+  border-bottom: 1px solid var(--neo-border-b);
+  border-right: 1px solid var(--neo-border-r);
+  pointer-events: none;
+}
+
+.services-hero-back:hover {
+  color: var(--color-text-white);
+  background: rgba(141, 90, 151, 0.2);
+  box-shadow: var(--neo-raised-sm), 0 0 20px rgba(141, 90, 151, 0.15);
+}
+
+.services-hero-back svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease;
+  opacity: 0.7;
+}
+
+.services-hero-back:hover svg {
+  transform: translateX(-3px);
+  opacity: 1;
+}
+
+/* ============================================
+   Services List (Right - Scrollable)
+   ============================================ */
+.services-list-wrapper {
+  flex: 1; /* Занимает оставшееся пространство */
+  min-height: 100vh;
+  padding: clamp(2rem, 4vw, 4rem);
+  padding-top: 0; /* Breadcrumbs handles top spacing */
+  background: linear-gradient(
+    to bottom,
+    var(--color-bg-darker) 0%,
+    var(--color-bg-light) 55%,
+    #2E2E33 100%
+  );
+  position: relative;
+  z-index: 1; /* Below header */
+  /* Плавное расширение синхронно с анимацией скрытия hero */
+  transition: flex 0.5s cubic-bezier(0.4, 0, 0.2, 1), width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Когда hero скрывается, список расширяется на всю ширину синхронно с анимацией hero */
+body.services-page.contacts-visible .services-list-wrapper {
+  flex: 1 1 100%;
+  width: 100%;
+}
+
+/* ============================================
+   Contacts & Footer for Services Pages
+   ============================================ */
+/* Контакты и футер занимают всю ширину на страницах услуг */
+/* Контакты и футер на страницах услуг - точно так же как на главной */
+body.services-page #revealWrap {
+  margin-left: 0;
+  width: 100%;
+  clear: both;
+}
+
+
+/* ============================================
+   Mobile Hint for Services Pages
+   ============================================ */
+.services-page-mobile-hint {
+  display: none;
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50; /* Below header (z-index: 51) */
+  background: rgba(26, 26, 46, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 0.75rem 1.5rem;
+  border-radius: 2rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  animation: fadeInUp 0.5s ease 1s both;
+  pointer-events: none;
+}
+
+.services-page-mobile-hint .hint-icon {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.services-page-mobile-hint .hint-icon span {
+  display: block;
+  width: 4px;
+  height: 4px;
+  background: currentColor;
+  border-radius: 50%;
+  animation: scrollDots 1.5s ease-in-out infinite;
+}
+
+.services-page-mobile-hint .hint-icon span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.services-page-mobile-hint .hint-icon span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes scrollDots {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-3px); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Show on mobile */
+@media (max-width: 768px) {
+  .services-page-mobile-hint {
+    display: flex;
+  }
+  
+  .services-page-mobile-hint.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+}
+
+.services-list-header {
+  margin-top: 1.5rem; /* Отступ от хлебных крошек */
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.services-list-header h2 {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: var(--font-weight-normal);
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-text-primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.75rem;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.services-list-header p {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+}
+
+/* Service Category */
+.service-category {
+  margin-bottom: 3rem;
+}
+
+.category-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: clamp(0.875rem, 1.5vw, 1.125rem);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-primary);
+  margin-bottom: 2rem;
+  margin-top: 3.25rem;
+  padding-bottom: 1rem;
+  padding-left: 16px; /* нижний левый угол текста по диагонали совпадает с углом L (::before) */
+  border-bottom: 2px solid transparent;
+  position: relative;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+.category-title:first-of-type {
+  margin-top: 0;
+}
+
+/* Угол L — один элемент, два фона: шва в углу нет ни на одном брейкпоинте */
+.category-title::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(180deg, transparent 0%, var(--color-accent) 35%, var(--color-accent) 100%),
+    linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent) 15%, transparent 70%);
+  background-size: 2px 100%, 100% 2px;
+  background-position: left 0 top 0, left 0 bottom 0;
+  background-repeat: no-repeat;
+}
+
+/* ============================================
+   Nested Accordions (Вложенные аккордеоны)
+   ============================================ */
+.nested-accordion-section {
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(0,0,0,0.25);
+  padding-top: 1.5rem;
+}
+
+.nested-accordion-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(0,0,0,0.28);
+}
+
+.nested-accordion-title svg {
+  width: 18px;
+  height: 18px;
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.nested-accordion-item {
+  background: var(--color-primary);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+  border: none;
+  transition: box-shadow 0.2s ease;
+  box-shadow: var(--neo-raised-xs);
+}
+
+.nested-accordion-item:hover {
+  box-shadow: var(--neo-raised-sm);
+}
+
+.nested-accordion-header {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s ease;
+}
+
+.nested-accordion-header:hover {
+  background: transparent;
+}
+
+.nested-accordion-header[aria-expanded="true"] {
+  background: transparent;
+}
+
+.nested-accordion-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  flex: 1;
+}
+
+.nested-accordion-price {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  background: linear-gradient(90deg, rgba(200,190,210,0.95) 0%, rgba(245,240,235,1) 40%, rgba(180,170,195,0.9) 70%, rgba(245,240,235,1) 100%);
+  background-size: 250% 100%;
+  animation: priceShimmer 6s ease-in-out infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--color-accent);
+  white-space: nowrap;
+  margin-right: 0.5rem;
+}
+
+.nested-accordion-icon {
+  width: 18px;
+  height: 18px;
+  position: relative;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.nested-accordion-icon::before,
+.nested-accordion-icon::after {
+  content: "";
+  position: absolute;
+  background: var(--color-text-muted);
+  transition: all 0.3s ease;
+  border-radius: 1px;
+}
+
+.nested-accordion-icon::before {
+  width: 10px;
+  height: 2px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.nested-accordion-icon::after {
+  width: 2px;
+  height: 10px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.nested-accordion-header[aria-expanded="true"] .nested-accordion-icon::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+  opacity: 0;
+}
+
+.nested-accordion-header[aria-expanded="true"] .nested-accordion-icon::before {
+  background: var(--color-accent);
+}
+
+.nested-accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nested-accordion-body {
+  padding: 0 1rem 1rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+/* Price groups внутри вложенных аккордеонов */
+.price-group {
+  margin-bottom: 1rem;
+}
+
+.price-group-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(0,0,0,0.28);
+}
+
+.price-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.price-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.65rem 0.85rem;
+  background: var(--color-primary);
+  border-radius: 8px;
+  border: none;
+  transition: box-shadow 0.2s ease;
+  position: relative;
+  /* Нео: поднятая строка */
+  box-shadow: var(--neo-raised-xs);
+}
+
+.price-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid rgba(0,0,0,0.28);
+  pointer-events: none;
+}
+
+.price-item:hover {
+  box-shadow:
+    3px 3px 7px #1e1e22,
+    -3px -3px 7px #424248;
+}
+
+.price-item-name {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  flex: 1;
+}
+
+.price-item-value {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  background: linear-gradient(90deg, rgba(200,190,210,0.95) 0%, rgba(245,240,235,1) 40%, rgba(180,170,195,0.9) 70%, rgba(245,240,235,1) 100%);
+  background-size: 250% 100%;
+  animation: priceShimmer 6s ease-in-out infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+}
+
+/* Reviews и Articles stubs внутри вложенных аккордеонов */
+.nested-stub-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0,0,0,0.25);
+}
+
+.nested-stub-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nested-stub-title svg {
+  width: 16px;
+  height: 16px;
+  color: var(--color-accent);
+}
+
+/* Заглушка внутри аккордеона — 8px как у nested/price-item */
+.nested-stub-content {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-style: italic;
+  padding: 1.5rem;
+  background: var(--color-primary);
+  border-radius: 8px;
+  text-align: center;
+  border: none;
+  line-height: var(--line-height-relaxed);
+  box-shadow: var(--neo-inset-sm);
+}
+
+/* ============================================
+   Accordion Styles
+   ============================================ */
+.accordion-item {
+  background: var(--color-primary);
+  border-radius: 0 50px 50px 0;
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+  border: none;
+  background-clip: padding-box;
+  position: relative;
+  transition: box-shadow 0.25s ease, transform 0.2s ease;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInUp 0.5s ease forwards;
+  /* Нео: поднятый аккордеон */
+  box-shadow:
+    4px 4px 10px #1e1e22,
+    -4px -4px 10px #424248;
+}
+
+/* Объёмная рамка */
+.accordion-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 0 50px 50px 0;
+  border-top: 1px solid rgba(255,255,255,0.09);
+  border-left: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(0,0,0,0.32);
+  border-right: 1px solid rgba(0,0,0,0.18);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.accordion-item:nth-child(1) { animation-delay: 0.05s; }
+.accordion-item:nth-child(2) { animation-delay: 0.1s; }
+.accordion-item:nth-child(3) { animation-delay: 0.15s; }
+.accordion-item:nth-child(4) { animation-delay: 0.2s; }
+.accordion-item:nth-child(5) { animation-delay: 0.25s; }
+.accordion-item:nth-child(n+6) { animation-delay: 0.3s; }
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.accordion-item:hover {
+  box-shadow:
+    5px 5px 14px #1e1e22,
+    -5px -5px 14px #424248;
+  transform: translateY(-2px);
+}
+
+/* Раскрытый аккордеон — контраст с фоном, шапка остаётся объёмной */
+.accordion-item[aria-expanded="true"] {
+  background: var(--color-bg-lighter);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.accordion-item[aria-expanded="true"] .accordion-header {
+  box-shadow: var(--neo-raised-sm), 0 0 0 1px rgba(141, 90, 151, 0.45);
+  background: var(--color-bg-lighter);
+}
+
+.accordion-item[aria-expanded="true"] .accordion-header::before {
+  opacity: 1;
+}
+
+.accordion-item[aria-expanded="true"] .accordion-body {
+  background: var(--color-bg-lighter);
+}
+
+.accordion-item--simple {
+  background: var(--color-bg-lighter);
+}
+
+/* Верх аккордеона — объёмный (поднятый), скругление как у item сверху справа */
+.accordion-header {
+  width: 100%;
+  padding: 1.5rem 2.5rem 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  background: var(--color-primary);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  box-shadow: var(--neo-raised-xs);
+  border-radius: 0 50px 0 0;
+}
+
+.accordion-header::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--color-accent-dark) 0%, var(--color-accent) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.accordion-header:hover {
+  background: var(--color-primary);
+  padding-left: 1.75rem;
+}
+
+.accordion-header:hover::before {
+  opacity: 1;
+}
+
+.accordion-header[aria-expanded="true"] {
+  padding-left: 1.75rem;
+  /* фон и тень заданы в .accordion-item[aria-expanded="true"] .accordion-header */
+}
+
+.accordion-header--static {
+  cursor: default;
+}
+
+.accordion-header--static:hover {
+  background: none;
+}
+
+.accordion-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.accordion-name {
+  display: block;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+  transition: color 0.3s ease;
+  word-break: break-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+.accordion-header:hover .accordion-name {
+  color: var(--color-accent);
+}
+
+.accordion-header[aria-expanded="true"] .accordion-name {
+  color: var(--color-accent);
+}
+
+.accordion-desc {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: 0.15rem;
+}
+
+.accordion-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding-left: 0.5rem;
+}
+
+.accordion-price {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  background: linear-gradient(90deg, rgba(200,190,210,0.95) 0%, rgba(245,240,235,1) 40%, rgba(180,170,195,0.9) 70%, rgba(245,240,235,1) 100%);
+  background-size: 250% 100%;
+  animation: priceShimmer 6s ease-in-out infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+  position: relative;
+  padding-right: 0.5rem;
+}
+
+.accordion-price::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    rgba(141, 90, 151, 0.9) 0%,
+    rgba(200, 190, 210, 0.55) 35%,
+    rgba(141, 90, 151, 0.95) 65%,
+    rgba(200, 190, 210, 0.55) 100%
+  );
+  background-size: 250% 100%;
+  animation: priceShimmer 6s ease-in-out infinite;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.accordion-item:hover .accordion-price::after {
+  opacity: 1;
+}
+
+.accordion-price.free {
+  background: linear-gradient(135deg, var(--color-success) 0%, #4ade80 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.accordion-price.free::after {
+  background: linear-gradient(90deg,
+    rgba(74, 222, 128, 0.9) 0%,
+    rgba(34, 197, 94, 0.5) 35%,
+    rgba(74, 222, 128, 0.95) 65%,
+    rgba(34, 197, 94, 0.5) 100%
+  );
+  background-size: 250% 100%;
+  animation: priceShimmer 6s ease-in-out infinite;
+}
+
+.accordion-icon {
+  width: 28px;
+  height: 28px;
+  position: relative;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: var(--neo-inset-sm);
+  border-top: 1px solid var(--neo-border-t);
+  border-left: 1px solid var(--neo-border-l);
+  border-right: 1px solid var(--neo-border-r);
+  border-bottom: 1px solid var(--neo-border-b);
+  transition: all 0.3s ease;
+  margin-left: auto;
+}
+
+.accordion-header:hover .accordion-icon {
+  box-shadow: var(--neo-inset-xs);
+  border-top-color: rgba(255,255,255,0.12);
+  border-left-color: rgba(255,255,255,0.08);
+}
+
+.accordion-icon::before,
+.accordion-icon::after {
+  content: "";
+  position: absolute;
+  background: var(--color-text-muted);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 1px;
+}
+
+.accordion-icon::before {
+  width: 10px;
+  height: 1.5px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.accordion-icon::after {
+  width: 1.5px;
+  height: 10px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.accordion-header[aria-expanded="true"] .accordion-icon::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+  opacity: 0;
+}
+
+.accordion-header[aria-expanded="true"] .accordion-icon::before {
+  background: var(--color-accent);
+  width: 16px;
+}
+
+.accordion-header:hover .accordion-icon::before,
+.accordion-header:hover .accordion-icon::after {
+  background: var(--color-accent);
+}
+
+/* Accordion Content */
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  opacity: 0;
+}
+
+.accordion-item[aria-expanded="true"] .accordion-content {
+  opacity: 1;
+}
+
+/* Тело аккордеона — вжатое (inset), скругления снизу синхронно (12px) */
+.accordion-body {
+  padding: 0 2.5rem 1.5rem 1.5rem;
+  border-top: 1px solid rgba(0,0,0,0.25);
+  margin-top: 0;
+  margin-right: 0.25rem;
+  margin-bottom: 0.25rem;
+  padding-top: 1.75rem;
+  animation: fadeIn 0.4s ease 0.1s both;
+  background: var(--color-primary);
+  box-shadow: var(--neo-inset-sm);
+  border-radius: 0 0 12px 12px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.accordion-body > p {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: 1rem;
+}
+
+/* Service Details inside Accordion */
+.service-details {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.detail-item h4 {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.detail-item h4::before {
+  content: "";
+  width: 3px;
+  height: 14px;
+  background: var(--color-accent);
+  border-radius: 2px;
+}
+
+.detail-item p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-normal);
+}
+
+.detail-item ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.detail-item li {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  padding: 0.4rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+  line-height: var(--line-height-relaxed);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.detail-item li:hover {
+  color: var(--color-text-primary);
+  transform: translateX(2px);
+}
+
+.detail-item li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 6px;
+  height: 6px;
+  background: linear-gradient(135deg, var(--color-accent-dark) 0%, var(--color-accent) 100%);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(141, 90, 151, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.detail-item li:hover::before {
+  transform: scale(1.2);
+}
+
+/* Accordion CTA «Записаться» — неоморфизм (поднятая акцентная кнопка) */
+.accordion-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: linear-gradient(135deg, var(--color-accent-dark) 0%, var(--color-accent) 100%);
+  border-radius: 8px;
+  border: none;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-white);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--neo-accent-raised);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Кнопка внутри accordion-content но вне accordion-body */
+.accordion-content > .accordion-cta {
+  margin: 1.5rem;
+  margin-top: 0;
+}
+
+.accordion-cta::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+  pointer-events: none;
+}
+
+.accordion-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--neo-accent-raised), 0 6px 20px rgba(141, 90, 151, 0.3);
+}
+
+.accordion-cta:hover::before {
+  left: 100%;
+}
+
+.accordion-cta:active {
+  transform: translateY(0);
+  box-shadow: var(--neo-accent-inset);
+  border-top-color: rgba(0, 0, 0, 0.2);
+  border-left-color: rgba(0, 0, 0, 0.15);
+  border-right-color: rgba(255, 255, 255, 0.05);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Category Subtitle */
+.category-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: -1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ============================================
+   Page Transition Preloader (same as main page)
+   ============================================ */
+.page-preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  background: var(--color-bg-dark, #2E2E33);
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+.page-preloader.loaded {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.page-preloader-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-preloader-logo {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  /* Скрываем до загрузки изображений */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.page-preloader-logo.images-loaded {
+  opacity: 1;
+}
+
+.page-preloader-base {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  mix-blend-mode: lighten;
+  opacity: 0.4;
+}
+
+.page-preloader-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 140px;
+  height: 0;
+  overflow: hidden;
+  transition: height 0.1s ease;
+}
+
+.page-preloader-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  mix-blend-mode: lighten;
+}
+
+/* Оптимизация качества изображений — лёгкий blur сглаживает пикселизацию при scale (как на главной) */
+.page-preloader-base,
+.page-preloader-progress {
+  image-rendering: auto;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  filter: blur(0.4px); /* Легкий blur для сглаживания пикселизации при scale */
+}
+
+/* Subcategory */
+.service-subcategory {
+  margin: 1.5rem 0;
+  padding-left: 1rem;
+  border-left: 2px solid var(--color-border);
+}
+
+.subcategory-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.subcategory-title::before {
+  content: "—";
+  color: var(--color-accent);
+}
+
+/* Product/Brand Group */
+.product-group {
+  margin: 1.5rem 0;
+  background: rgba(141, 90, 151, 0.03);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.product-group-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.product-group-title .brand-tag {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-accent);
+  background: rgba(141, 90, 151, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.product-group .service-item {
+  background: var(--color-bg-white);
+}
+
+/* ============================================
+   Service Detail Modal
+   ============================================ */
+.service-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+}
+
+.service-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.service-modal-content {
+  background: var(--color-bg-white);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow: hidden;
+  transform: translateY(20px) scale(0.95);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.service-modal.active .service-modal-content {
+  transform: translateY(0) scale(1);
+}
+
+.service-modal-header {
+  padding: 2rem 2rem 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  position: relative;
+}
+
+.service-modal-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: var(--color-bg-light);
+  border-radius: 50%;
+  font-size: 1.5rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.service-modal-close:hover {
+  background: var(--color-accent);
+  color: var(--color-text-white);
+}
+
+.service-modal-title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  padding-right: 3rem;
+}
+
+.service-modal-price {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent);
+  margin-top: 0.5rem;
+}
+
+.service-modal-body {
+  padding: 2rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.service-modal-section {
+  margin-bottom: 2rem;
+}
+
+.service-modal-section:last-child {
+  margin-bottom: 0;
+}
+
+.service-modal-section h4 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.service-modal-section h4 svg {
+  width: 18px;
+  height: 18px;
+  color: var(--color-accent);
+}
+
+.service-modal-section p,
+.service-modal-section ul {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+.service-modal-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.service-modal-section li {
+  padding: 0.5rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.service-modal-section li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--color-accent);
+  font-weight: var(--font-weight-bold);
+}
+
+.service-modal-footer {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-light);
+}
+
+.service-modal-cta {
+  display: flex;
+  gap: 1rem;
+}
+
+.service-modal-cta .btn-primary {
+  flex: 1;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, var(--color-accent-dark) 0%, var(--color-accent) 100%);
+  border: none;
+  border-radius: 8px;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-white);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  text-decoration: none;
+}
+
+.service-modal-cta .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(141, 90, 151, 0.3);
+}
+
+.service-modal-cta .btn-secondary {
+  padding: 1rem 1.5rem;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.service-modal-cta .btn-secondary:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* ============================================
+   Responsive Styles
+   ============================================ */
+
+/* Desktop & Tablet Landscape - Hero должен быть fixed */
+@media (min-width: 1025px) {
+  .services-hero {
+    /* На десктопе и планшетах в горизонтали hero должен быть fixed */
+    /* до триггера анимации скрытия (когда контакты появляются) */
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  
+  /* Фиксируем ширину контента на десктопе, чтобы он не перестраивался при изменении ширины hero */
+  .services-hero-content {
+    width: calc(30vw - clamp(1.5rem, 4vw, 5rem) * 2); /* 30vw минус padding слева и справа */
+    min-width: calc(30vw - clamp(1.5rem, 4vw, 5rem) * 2);
+    max-width: calc(30vw - clamp(1.5rem, 4vw, 5rem) * 2);
+  }
+  
+  .services-page-layout {
+    margin-left: 30%;
+    align-items: flex-start;
+  }
+  
+}
+
+/* Планшеты в горизонтали (1024px) - Hero должен быть fixed */
+@media (min-width: 1024px) and (max-width: 1024px) and (orientation: landscape) {
+  .services-hero {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .services-page-layout {
+    margin-left: 30%;
+    align-items: flex-start;
+    /* Плавное убирание margin-left синхронно с анимацией скрытия hero */
+    transition: margin-left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* Mobile - Hero в общем потоке */
+@media (max-width: 768px) {
+  .breadcrumbs {
+    position: relative;
+    left: 0;
+    margin-left: 0;
+    padding: 7rem 1.5rem 1.5rem; /* Больше отступ от header */
+  }
+  body.services-page .breadcrumbs {
+    background: #242429;
+  }
+  
+  .services-page-layout {
+    flex-direction: column;
+  }
+  
+  .services-hero {
+    position: relative;
+    width: 100%;
+    height: auto;
+    min-height: 50vh;
+    padding: 6rem 2rem 3rem;
+    overflow: visible;
+    overflow-y: visible;
+  }
+  
+  .services-list-wrapper {
+    margin-left: 0;
+    width: 100%;
+    padding-top: 2rem;
+  }
+  
+  .services-hero-stats {
+    flex-wrap: wrap;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .services-page,
+  .services-list-wrapper {
+    background: linear-gradient(to bottom, #35353b 0%, #3a3a40 55%, #404048 100%);
+  }
+
+  .breadcrumbs {
+    padding: 7.5rem 1.5rem 1.5rem; /* Ещё больше отступ на мобильных */
+  }
+  
+  .services-hero {
+    min-height: 45vh;
+    padding: 5rem 1.5rem 2.5rem;
+    overflow: visible;
+    overflow-y: visible;
+  }
+  
+  .services-hero-title {
+    font-size: clamp(1.35rem, 4.5vw, 2.1rem);
+  }
+  
+  .services-hero-description {
+    font-size: var(--font-size-base);
+  }
+  
+  .services-hero-stats {
+    gap: 1.5rem;
+  }
+  
+  .services-list-wrapper {
+    padding: 0;
+    padding-top: 2rem;
+  }
+  
+  .service-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  
+  .service-item-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .service-modal-content {
+    max-height: 90vh;
+    margin: 1rem;
+    width: calc(100% - 2rem);
+  }
+  
+  .service-modal-header {
+    padding: 1.5rem;
+  }
+  
+  .service-modal-body {
+    padding: 1.5rem;
+  }
+  
+  .service-modal-cta {
+    flex-direction: column;
+  }
+}
+
+/* ============================================
+   CTA Section
+   ============================================ */
+.services-cta-section {
+  margin-top: 3rem;
+  padding-top: 2rem;
+}
+
+.services-cta-card {
+  background: var(--color-primary);
+  border-radius: 16px;
+  padding: 2.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--neo-raised);
+}
+
+.services-cta-card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 60%;
+  height: 100%;
+  background: radial-gradient(ellipse, rgba(141, 90, 151, 0.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.services-cta-card h3 {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-white);
+  margin-bottom: 0.75rem;
+  position: relative;
+  z-index: 1;
+}
+
+.services-cta-card p {
+  font-size: var(--font-size-base);
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 400px;
+  margin: 0 auto 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.services-cta-card .btn-primary {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, var(--color-accent-dark) 0%, var(--color-accent) 100%);
+  border: none;
+  border-radius: 8px;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-white);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.services-cta-card .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(141, 90, 151, 0.4);
+}
+
+/* ============================================
+   Info Section
+   ============================================ */
+.services-info-section {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.info-card {
+  display: flex;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  background: var(--color-bg-white);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  transition: all 0.3s ease;
+}
+
+.info-card:hover {
+  border-color: rgba(141, 90, 151, 0.2);
+  box-shadow: 0 4px 16px rgba(141, 90, 151, 0.08);
+}
+
+.info-icon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  background: rgba(141, 90, 151, 0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent);
+}
+
+.info-content h4 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.info-content p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-relaxed);
+}
+
+/* Header on services pages inherits main styles */
+
+.form-submit-btn {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, var(--color-accent-dark) 0%, var(--color-accent) 100%);
+  border: none;
+  border-radius: 8px;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-white);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.form-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(141, 90, 151, 0.3);
+}
+
+.form-privacy {
+  text-align: center;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-top: 1rem;
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .services-hero {
+    min-height: 40vh;
+    padding: 4.5rem 1rem 2rem;
+  }
+  
+  .services-hero-title {
+    font-size: clamp(1.15rem, 5vw, 1.75rem);
+  }
+  
+  .services-hero-badge {
+    font-size: var(--font-size-xs);
+    padding: 0.4rem 0.75rem;
+  }
+  
+  .stat-item {
+    flex: 1 1 40%;
+  }
+  
+  .category-title {
+    font-size: var(--font-size-lg);
+  }
+  
+  .service-item {
+    padding: 1rem;
+  }
+}
+
+
+/* ============================================
+   Sub-page Enhancement — Typography & Polish
+   ============================================ */
+
+/* Stronger hero title gradient */
+.services-hero-title span {
+  background: linear-gradient(135deg,
+    var(--color-text-primary) 0%,
+    rgba(141, 90, 151, 0.95) 60%,
+    rgba(170, 110, 185, 0.85) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hero badge — cleaner pill */
+.services-hero-badge {
+  background: rgba(141, 90, 151, 0.15);
+  border-color: rgba(141, 90, 151, 0.35);
+  letter-spacing: 0.18em;
+  font-size: 0.65rem;
+}
+
+/* Nested accordion item — neo (no override) */
+
+.nested-accordion-name {
+  color: rgba(245, 240, 235, 0.88);
+  letter-spacing: 0.02em;
+}
+
+/* Improved service description text */
+.services-hero-description {
+  color: rgba(245, 240, 235, 0.65);
+  line-height: 1.75;
+}
+
+/* Stats block */
+.services-hero-stat-value {
+  color: var(--color-accent);
+}
+
+/* Breadcrumb separator — subtle arrow */
+.breadcrumbs-item:not(:last-child)::after {
+  opacity: 0.35;
+}
+
+/* Sub-page back link */
+.back-link,
+a.breadcrumbs-link--home {
+  transition: color 0.2s ease, gap 0.2s ease;
+}
+a.breadcrumbs-link--home:hover {
+  color: var(--color-accent);
+  gap: 0.55rem;
+}
+
+@keyframes priceShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+
+/* ============================================
+   Mobile: Accordion adaptive layout
+   ============================================ */
+@media (max-width: 768px) {
+  /* Аккордеоны — от левого края, справа небольшой отступ */
+  .services-list-wrapper {
+    padding: 0 1rem 0 0;
+    padding-top: 2rem;
+  }
+
+  .services-list-header {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .service-category {
+    margin-bottom: 2rem;
+  }
+
+  .category-title {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
+  /* Аккордеон — левая граница к краю, отступ между аккордеонами */
+  .accordion-item {
+    border-radius: 0 40px 40px 0;
+    margin-bottom: 1rem;
+  }
+
+  .accordion-item::before {
+    border-radius: 0 40px 40px 0;
+  }
+
+  /* Верх: скругление синхронно с item (40px на мобильных); иконка по центру справа */
+  .accordion-header {
+    border-radius: 0 40px 0 0;
+    padding: 1rem 2.5rem 0.875rem 1.25rem; /* верх чуть больше; право — место под иконку */
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    position: relative;
+  }
+
+  .accordion-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+  }
+
+  .accordion-name {
+    font-size: 0.875rem;
+    line-height: 1.35;
+    text-align: left;
+  }
+
+  .accordion-desc {
+    font-size: 0.7rem;
+    width: 100%;
+    margin-top: 0;
+    text-align: left;
+    line-height: 1.35;
+  }
+
+  .accordion-right {
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 38%;
+    padding-right: 0; /* иконка вынесена из потока */
+  }
+
+  .accordion-price {
+    font-size: 0.875rem;
+  }
+
+  /* Кнопка +/- по центру справа, круг с нео-вдавленностью, чуть правее */
+  .accordion-icon {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    margin-left: 0;
+    border-radius: 50%;
+    box-shadow: var(--neo-inset-xs);
+  }
+
+  .accordion-icon::before {
+    width: 8px;
+    height: 1.25px;
+  }
+
+  .accordion-header[aria-expanded="true"] .accordion-icon::before {
+    width: 12px;
+  }
+
+  .accordion-icon::after {
+    width: 1.25px;
+    height: 8px;
+  }
+
+  .accordion-body {
+    padding: 0 1.25rem 1.25rem;
+    padding-top: 1.5rem;
+    border-radius: 0 0 12px 12px;
+  }
+
+  /* Nested accordion — полный отступ */
+  .nested-accordion-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
+
+  .nested-accordion-item {
+    border-radius: 8px;
+  }
+
+  .nested-accordion-header {
+    padding: 0.75rem 0.875rem;
+    gap: 0.5rem;
+  }
+
+  /* Price item — имя и цена в строку, перенос по словам */
+  .price-item {
+    flex-wrap: nowrap;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+  }
+
+  .price-item-name {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--font-size-xs);
+    word-break: break-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    overflow-wrap: break-word;
+    line-height: 1.4;
+  }
+
+  .price-item-value {
+    flex-shrink: 0;
+    font-size: var(--font-size-sm);
+    white-space: nowrap;
+  }
+
+  /* Вложенные аккордеоны — нормальная читаемость */
+  .nested-accordion-name {
+    font-size: var(--font-size-xs);
+    line-height: 1.4;
+    word-break: break-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+
+  .nested-accordion-price {
+    font-size: var(--font-size-sm);
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-right: 0.25rem;
+  }
+
+  .nested-accordion-body {
+    padding: 0 0.875rem 0.875rem;
+  }
+
+  .price-list {
+    gap: 0.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .accordion-header {
+    padding: 0.875rem 2.5rem 0.875rem 1rem; /* право — под иконку по центру */
+  }
+
+  .nested-accordion-header {
+    padding: 0.65rem 0.75rem;
+  }
+
+  .price-item {
+    padding: 0.5rem 0.65rem;
+  }
+
+  .price-item-name {
+    font-size: 0.7rem;
+  }
+
+  .price-item-value {
+    font-size: 0.8rem;
+  }
+}

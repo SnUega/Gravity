@@ -1,0 +1,168 @@
+/**
+ * Preloader — механика из концепции v0.8, адаптированная под реальный проект.
+ *
+ * Принцип: CSS делает анимацию, JS только переключает классы.
+ *
+ * Фаза 1 — заполнение:
+ *   rAF-loop увеличивает .preloader-fill height 0→100%
+ *   Прогресс считается по времени (time-based), не по кадрам —
+ *   гарантирует равномерную скорость независимо от fps.
+ *
+ * Фаза 2 — exit (после заполнения):
+ *   classList.add('hidden')
+ *     → .preloader-content: CSS transition scale(init→final) + translateY
+ *     → .preloader::before: CSS transition opacity 1→0 (фон гаснет)
+ *   setTimeout(250): classList.add('word-animate')
+ *     → .word-mask clip-path: CSS transition открывается
+ *     → .word-image transform: CSS transition translateY вверх
+ *   setTimeout(350): dispatchEvent('preloaderComplete')
+ *     → header начинает intro через requestAnimationFrame
+ */
+
+import { $, isMobileDevice } from '../../core/utils.js';
+import { lockScroll, unlockScroll } from '../../core/scroll-lock.js';
+import { EVENTS } from '../../core/constants.js';
+
+// Длительность анимации заполнения в мс.
+// При необходимости скорректируй под желаемый темп.
+const FILL_DURATION_MS = 1800;
+
+class Preloader {
+  constructor() {
+    this.el         = null;
+    this.fill       = null;
+    this.rafId      = null;
+    this.progress   = 0;
+    this._startTime = null; // метка старта для time-based прогресса
+  }
+
+  init() {
+    if (!isMobileDevice({ excludeTablet: false })) {
+      try { window.history.scrollRestoration = 'manual'; } catch (_) {}
+      requestAnimationFrame(() => window.scrollTo(0, 0));
+    }
+    lockScroll();
+
+    this.el   = $('#preloader');
+    this.fill = this.el && this.el.querySelector('.preloader-fill');
+
+    if (!this.el || !this.fill) {
+      unlockScroll();
+      window.dispatchEvent(new CustomEvent(EVENTS.PRELOADER_COMPLETE));
+      return;
+    }
+
+    // Заранее включаем will-change для word-элементов —
+    // браузер создаст compositing layer до старта анимации
+    const wordMask  = this.el.querySelector('.word-mask');
+    const wordImage = this.el.querySelector('.word-image');
+    if (wordMask)  wordMask.style.willChange  = 'clip-path';
+    if (wordImage) wordImage.style.willChange = 'transform';
+
+    this._preloadImages().then(() => {
+      this._startTime = null; // сбрасываем перед стартом
+      this.rafId = requestAnimationFrame(this._tick);
+    });
+  }
+
+  _preloadImages() {
+    const imgs    = Array.from(this.el.querySelectorAll('.preloader-base, .preloader-progress'));
+    const logoBox = this.el.querySelector('.preloader-logo');
+    const done    = () => { if (logoBox) logoBox.classList.add('images-loaded'); };
+    if (!imgs.length || imgs.every(i => i.complete && i.naturalHeight)) { done(); return Promise.resolve(); }
+    return Promise.all(imgs.map(img => new Promise(res => {
+      if (img.complete && img.naturalHeight) return res();
+      img.onload = img.onerror = res;
+    }))).then(done);
+  }
+
+  // Time-based tick: прогресс считается от прошедшего времени,
+  // а не от количества кадров → одинаковая скорость при любом fps.
+  _tick = (timestamp) => {
+    if (!this._startTime) this._startTime = timestamp;
+
+    const elapsed = timestamp - this._startTime;
+    this.progress = Math.min(100, (elapsed / FILL_DURATION_MS) * 100);
+    this.fill.style.height = this.progress + '%';
+
+    if (this.progress < 100) {
+      this.rafId = requestAnimationFrame(this._tick);
+    } else {
+      this._waitForReady();
+    }
+  };
+
+  _waitForReady() {
+    const check = () => {
+      if (document.readyState === 'complete') this._hide();
+      else setTimeout(check, 80);
+    };
+    check();
+  }
+
+  _hide() {
+    if (this.rafId) { cancelAnimationFrame(this.rafId); this.rafId = null; }
+
+    const heroEl = document.querySelector('#hero, .hero, section:first-of-type');
+
+    // Перемещаем в hero — теперь position: absolute относительно него
+    if (heroEl) {
+      heroEl.appendChild(this.el);
+      Object.assign(this.el.style, {
+        position:      'absolute',
+        top:           '50%',
+        left:          '50%',
+        transform:     'translate(-50%, -50%)',
+        zIndex:        '1',
+        pointerEvents: 'none',
+        margin:        '0'
+      });
+    }
+
+    // Принудительный reflow — браузер применяет позицию ДО добавления 'hidden'
+    void this.el.offsetHeight;
+
+    // Разблокируем скролл
+    unlockScroll();
+
+    // Главный переход — CSS делает scale и opacity через transition
+    this.el.classList.add('hidden');
+
+    // Слово появляется чуть позже — чтобы был виден момент раскрытия.
+    // 250мс (вместо 200) даёт браузеру время завершить exit-анимацию
+    // перед стартом clip-path/transform на word-элементах.
+    setTimeout(() => {
+      // Принудительный reflow перед добавлением класса —
+      // гарантирует что transition стартует с правильного начального состояния
+      const wordMask = this.el.querySelector('.word-mask');
+      if (wordMask) void wordMask.offsetHeight;
+
+      this.el.classList.add('word-animate');
+
+      // Снимаем will-change после завершения анимации — освобождаем память
+      setTimeout(() => {
+        const wm = this.el.querySelector('.word-mask');
+        const wi = this.el.querySelector('.word-image');
+        if (wm) wm.style.willChange = 'auto';
+        if (wi) wi.style.willChange = 'auto';
+      }, 900); // чуть дольше длительности transition (0.8s)
+    }, 250);
+
+    // Сигнал для header и остальных модулей
+    // Header стартует через rAF — плавно, без накладки на CSS transition логотипа
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent(EVENTS.PRELOADER_COMPLETE));
+    }, 350);
+  }
+}
+
+let _instance = null;
+
+export function initPreloader() {
+  if (_instance) return _instance;
+  _instance = new Preloader();
+  _instance.init();
+  return _instance;
+}
+
+if (typeof window !== 'undefined') initPreloader();

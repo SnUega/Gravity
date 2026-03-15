@@ -1,0 +1,1310 @@
+    /* Desktop / MacBook: расположение как на Air (шире 1366px) */
+    @media (min-width: 1367px) {
+      .menu-container.active, .navc-menu.active {
+        height: 65vh !important;
+      }
+      .menu-container, .navc-menu {
+        width: 72%;
+        left: 14%;
+      }
+      .menu-inner, .navc-inner {
+        height: 65vh !important;
+        padding: 100px 60px 2px !important;
+      }
+      .menu-contacts-section {
+        margin-bottom: 2px !important;
+      }
+      .menu-top-section { align-items: stretch; }
+      .menu-left, .menu-right { display: flex; flex-direction: column; }
+      .menu-left { align-items: stretch; justify-content: flex-start; height: 100%; }
+      .menu-left h2 { text-align: center; margin-bottom: 1.2rem; flex: 0 0 auto; }
+      .menu-left .navc-links { margin-top: 18px; flex: 0 0 auto; }
+      .menu-left li { text-align: center; margin-bottom: 1rem; }
+      .menu-contacts-section { margin-top: auto; padding-top: 8px !important; margin-bottom: 16px; flex: 0 0 auto; }
+      .contact-buttons { justify-content: center; }
+      .menu-right { justify-content: flex-start; }
+      .menu-right h2 { text-align: center; margin-bottom: 0.75rem; flex: 0 0 auto; }
+      .menu-right .blog-container { margin-top: auto; flex: 0 0 auto; }
+      .blog-scroll-area { width: 102%; margin-right: -0.25rem; max-height: 45vh; }
+      
+      .menu-right .article-thumbnail {
+        width: 5rem;
+        height: 5rem;
+        flex-shrink: 0;
+      }
+      .menu-right .article-title {
+        font-size: 0.9rem;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .menu-right .article-preview {
+        font-size: 0.8rem;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .menu-right .blog-article {
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+      }
+    }
+    /* Curtain mode: скрыть нижний divider под мини‑блогом на телефонах и планшетах в портрете */
+    @media (max-width: 768px) {
+      .curtain-content hr.curtain-divider:nth-of-type(2) { display: none !important; }
+    }
+    @media (min-width: 769px) and (max-width: 1024px) and (orientation: portrait) {
+      .curtain-content hr.curtain-divider:nth-of-type(2) { display: none !important; }
+    }
+
+    /* iPad Pro (портрет): показать 2 мини‑статьи и кусочек 3‑й */
+    @media (orientation: portrait) and (min-width: 1000px) and (max-width: 1080px),
+           (orientation: portrait) and (min-height: 1300px) and (max-height: 1400px) {
+      .curtain-content .blog-container { max-height: 840px; }
+      .curtain-content .blog-scroll-area { max-height: 660px; }
+    }
+    .menu-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 18; /* above page content (e.g., gallery nav), below menu layers */
+      --menu-blur: 0px;
+      backdrop-filter: blur(var(--menu-blur));
+      -webkit-backdrop-filter: blur(var(--menu-blur));
+      background: rgba(0,0,0,0.08);
+      opacity: 0;
+      transition: opacity 280ms ease, backdrop-filter 280ms ease, -webkit-backdrop-filter 280ms ease;
+      pointer-events: none;
+    }
+
+    .menu-backdrop.is-visible {
+      --menu-blur: 10px;
+      opacity: 1;
+    }
+    /* Menu */
+    .menu-container, .navc-menu {
+      position: fixed;
+      top: calc(var(--index) * 4);
+      left: 20%;
+      width: 60%;
+      transform: none;
+      height: 0;
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0);
+      transition: none;
+      z-index: 19;
+      border-radius: 50px;
+    }
+
+    .menu-container.active, .navc-menu.active {
+      height: 70vh;
+      overflow: visible; /* Важно для отображения border-radius */
+    }
+
+    .menu-stem, .navc-stem {
+      position: absolute; /* внутри контейнера */
+      top: 0;
+      left: 50%;
+      width: 64px; /* start same as button */
+      height: 0;
+      transform: translateX(-50%);
+      z-index: 20;
+      background: transparent;
+      border-radius: 0 0 32px 32px;
+      overflow: visible; /* чтобы тени не резались */
+    }
+
+    .menu-panel, .navc-panel {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      height: 100%;
+      /* Монолитная панель меню — поднята над страницей с AO */
+      background: linear-gradient(
+        155deg,
+        rgba(98,98,107,1) 0%,
+        rgba(80,80,88,1)  45%,
+        rgba(60,60,68,1)  100%
+      );
+      border: none;
+      border-radius: 50px;
+      clip-path: inset(0 50% 0 50% round 50px);
+      overflow: hidden;
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.1) inset,    /* верхняя световая кромка */
+        0 -1px 0 rgba(0,0,0,0.35) inset,          /* нижняя теневая кромка */
+        0 4px 8px rgba(0,0,0,0.45),               /* контактная тень */
+        0 16px 48px rgba(0,0,0,0.38),             /* AO рассеянная */
+        0 40px 80px rgba(0,0,0,0.22),             /* глубокая */
+        0 0 0 0.5px rgba(255,255,255,0.06);       /* контур-кромка */
+      will-change: clip-path;
+    }
+
+    /* Curtain mode (mobile + tablet portrait) */
+    @media (max-width: 768px), (min-width: 769px) and (max-width: 1024px) and (orientation: portrait) {
+      .navc-menu.curtain-open .navc-panel,
+      .menu-container.curtain-open .menu-panel {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+        border-radius: 0 !important;
+        /* allow GSAP to control transform for smooth slide */
+        clip-path: none !important;
+        box-shadow: none !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+        z-index: 50 !important;
+        background: #5a5a62 !important;
+        will-change: transform;
+        pointer-events: auto;
+        touch-action: pan-y;
+        overscroll-behavior: contain;
+      }
+
+      /* Floating curtain panel when moved to body */
+      .navc-panel.curtain-floating,
+      .menu-panel.curtain-floating {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+        border-radius: 0 !important;
+        background: #5a5a62 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+        clip-path: none !important;
+        box-shadow: none !important;
+        z-index: 50 !important;
+        will-change: transform;
+        pointer-events: auto;
+        touch-action: pan-y;
+        overscroll-behavior: contain;
+      }
+      .navc-panel.curtain-floating::before,
+      .menu-panel.curtain-floating::before { content: none !important; display: none !important; }
+      .navc-panel.curtain-floating::after,
+      .menu-panel.curtain-floating::after { content: none !important; display: none !important; }
+
+      /* Ensure the curtain stacking is above content but under header */
+      .navc-menu.curtain-open,
+      .menu-container.curtain-open { z-index: 50; }
+
+      /* Hide desktop horizontal reveal overlay in curtain mode */
+      .navc-menu.curtain-open .navc-panel::before,
+      .menu-container.curtain-open .menu-panel::before {
+        content: none !important;
+        display: none !important;
+      }
+
+      /* Content layout inside curtain — фон на весь скролл, чтобы не было резкой границы */
+      .curtain-content {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        padding: 100px 24px 40px; /* leave space for the close (burger→X) button area */
+        max-width: none; /* take full width */
+        width: 100%;
+        margin: 0;
+        min-height: 100vh;
+        box-sizing: border-box;
+        background: var(--color-bg-header-solid, #38383f);
+      }
+
+      /* removed in-panel button */
+
+      .curtain-content .navc-menu-logo {
+        position: static;
+        transform: none;
+        align-self: center;
+        margin-bottom: 12px;
+      }
+      .curtain-content .navc-menu-logo img {
+        height: 120px !important;
+        width: auto !important;
+      }
+
+      .curtain-content h2 {
+        text-align: center;
+        font-weight: var(--font-weight-normal);
+        font-size: clamp(1rem, 2vw, 1.25rem);
+        letter-spacing: var(--letter-spacing-wide);
+        text-transform: uppercase;
+        color: var(--color-text-primary);
+      }
+      .curtain-content .navc-links {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .curtain-content .navc-links li { 
+        margin-bottom: 16px; 
+        text-align: center; 
+      }
+      .curtain-content .navc-links a { 
+        text-decoration: none; 
+        color: var(--color-text-primary); 
+        font-weight: var(--font-weight-light); 
+        font-size: var(--font-size-sm);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        display: block;
+        padding: 12px 0;
+        overflow: visible;
+      }
+      .curtain-content .navc-links a::before {
+        display: none;
+      }
+      .curtain-content .navc-links a span {
+        transform: none !important;
+      }
+      .curtain-content .navc-links li {
+        perspective: none;
+      }
+
+      .curtain-divider { border: none; border-top: 1px solid rgba(245, 240, 235, 0.12); margin: 10px 0; }
+
+      .curtain-content .menu-right { padding: 0; }
+      
+      /* Блог в curtain режиме */
+      .curtain-content .blog-container {
+        height: auto;
+        max-height: 400px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 1rem;
+        box-sizing: border-box;
+      }
+      
+      .curtain-content .blog-scroll-area {
+        max-height: 300px;
+        width: 100%;
+        margin: 0;
+        padding: 1rem;
+        box-sizing: border-box;
+      }
+      /* iPad Air portrait: немного увеличиваем высоту мини‑блога */
+      @media (min-width: 820px) and (max-width: 1023px) and (orientation: portrait) {
+        .curtain-content .blog-container { max-height: 520px; }
+        .curtain-content .blog-scroll-area { max-height: 400px; }
+      }
+
+      /* ── iPad Air / Mini portrait: лучшие пропорции мини-статей ── */
+      /* iPad Mini (768px): чуть крупнее чем телефон */
+      @media (min-width: 768px) and (max-width: 768px) and (orientation: portrait) {
+        .curtain-content .blog-article { gap: 18px; }
+        .curtain-content .blog-stub .article-thumbnail { width: 88px !important; height: 88px !important; }
+        .curtain-content .blog-stub .article-title { font-size: 14px; }
+        .curtain-content .blog-stub .article-preview { font-size: 12px; -webkit-line-clamp: 3; }
+        .curtain-content .blog-container { max-height: 460px; }
+        .curtain-content .blog-scroll-area { max-height: 360px; }
+      }
+      /* iPad Air (820px) portrait: увеличенные карточки статей */
+      @media (min-width: 819px) and (max-width: 1023px) and (orientation: portrait) {
+        .curtain-content .blog-article { gap: 20px; }
+        .curtain-content .blog-stub .article-thumbnail { width: 100px !important; height: 100px !important; }
+        .curtain-content .blog-stub .article-title { font-size: 15px !important; line-height: 1.35; }
+        .curtain-content .blog-stub .article-preview { font-size: 13px !important; -webkit-line-clamp: 3; line-clamp: 3; }
+        .curtain-content .blog-stub .article-content { padding-right: 4.5rem !important; }
+        .curtain-content .blog-stub { padding: 1rem; margin-bottom: 14px; }
+      }
+      
+      .curtain-content .blog-article {
+        flex-direction: column;
+        text-align: center; 
+        margin-bottom: 16px;
+      }
+
+      /* iPad Pro portrait: показать 2 мини‑статьи и кусочек 3‑й (override ниже базовых 300/400px) */
+      @media (min-width: 1024px) and (max-width: 1024px) and (orientation: portrait) {
+        .curtain-content .blog-container { max-height: 900px; }
+        .curtain-content .blog-scroll-area { max-height: 720px; }
+      }
+      
+      .curtain-content .article-thumbnail {
+        width: 100%;
+        height: 120px;
+        margin-bottom: 12px;
+      }
+
+      /* Portrait menus (phones + tablets): show blog items as row (thumb left, text right) */
+      @media (max-width: 768px), (min-width: 769px) and (max-width: 1024px) and (orientation: portrait) {
+        .curtain-content .blog-article { 
+          flex-direction: row !important;
+          align-items: flex-start;
+          text-align: left;
+          gap: 25px;
+        }
+        .curtain-content .article-thumbnail { 
+          width: 96px; 
+          height: 96px; 
+          margin-bottom: 0; 
+          flex-shrink: 0;
+        }
+        .curtain-content .article-content { 
+          display: flex; 
+          flex-direction: column; 
+          padding-right: 18px;
+        }
+
+        .curtain-content .blog-stub {
+          min-height: auto;
+          padding: 0.75rem;
+          margin-bottom: 12px;
+        }
+
+        .curtain-content .blog-stub .article-content {
+          padding-right: 4rem !important;
+          min-height: auto;
+        }
+
+        .curtain-content .blog-stub .article-title {
+          font-size: 14px;
+          line-height: 1.3;
+          margin-bottom: 6px;
+          padding-right: 0;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .curtain-content .blog-stub .article-preview {
+          font-size: 12px;
+          line-height: 1.4;
+          margin-bottom: 0;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .curtain-content .blog-stub .stub-badge {
+          position: absolute;
+          font-size: 0.65rem;
+          padding: 0.2rem 0.5rem;
+          top: 0.5rem;
+          right: 0.5rem;
+        }
+
+        .curtain-content .blog-stub .article-thumbnail {
+          flex-shrink: 0;
+          width: 80px !important;
+          height: 80px !important;
+        }
+
+        /* Дополнительные стили для очень маленьких экранов */
+        @media (max-width: 480px) {
+          .curtain-content .blog-stub {
+            padding: 0.5rem;
+            margin-bottom: 10px;
+          }
+
+          .curtain-content .blog-stub .article-content {
+            padding-right: 3.5rem !important;
+          }
+
+          .curtain-content .blog-stub .article-title {
+            font-size: 13px;
+            line-height: 1.2;
+          }
+
+          .curtain-content .blog-stub .article-preview {
+            font-size: 11px;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+          }
+
+          .curtain-content .blog-stub .stub-badge {
+            font-size: 0.6rem;
+            padding: 0.15rem 0.4rem;
+            top: 0.4rem;
+            right: 0.4rem;
+          }
+
+          .curtain-content .blog-stub .article-thumbnail {
+            width: 70px !important;
+            height: 70px !important;
+          }
+        }
+        .curtain-content .article-title { 
+          -webkit-line-clamp: 2; 
+          line-clamp: 2; 
+        }
+        .curtain-content .article-preview { 
+          -webkit-line-clamp: 3; 
+          line-clamp: 3; 
+        }
+
+        .curtain-content .contact-buttons { gap: 18px; }
+        .curtain-content .menu-contacts .contact-btn,
+        .curtain-content .contact-buttons .contact-btn { width: 60px; height: 60px; }
+        .curtain-content .menu-contacts .contact-btn svg,
+        .curtain-content .contact-buttons .contact-btn svg { width: 20px; height: 20px; }
+      }
+      
+      .curtain-content .article-title {
+        font-size: 18px;
+        margin-bottom: 8px;
+      }
+      
+      .curtain-content .article-preview {
+        font-size: 15px;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+      }
+
+      .curtain-content .menu-contacts-section {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--color-border-light);
+      }
+      
+      .curtain-content .menu-contacts { 
+        display: flex;
+        justify-content: center; 
+        align-items: center;
+      }
+      
+      .curtain-content .contact-buttons {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      
+      .curtain-content .contact-btn {
+        position: relative;
+        display: block;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 2px solid rgba(245, 240, 235, 0.2);
+        background: rgba(245, 240, 235, 0.08);
+        color: var(--color-text-white);
+        text-decoration: none;
+        transition: all 0.15s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      }
+      
+      .curtain-content .contact-btn:hover {
+        background: var(--color-accent);
+        border-color: var(--color-accent);
+        transform: translateY(1px);
+        box-shadow: inset 0 4px 8px rgba(46, 46, 51, 0.4);
+      }
+      
+      .curtain-content .contact-btn svg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 18px;
+        height: 18px;
+        transition: all 0.15s ease;
+      }
+      
+      .curtain-content .contact-btn:hover svg {
+        transform: translate(-50%, -50%) scale(0.95);
+        color: var(--color-primary, #2E2E33) !important;
+        fill: var(--color-primary, #2E2E33) !important;
+      }
+      .curtain-content .contact-btn.email-btn:hover svg,
+      .curtain-content .contact-btn.booking-btn:hover svg {
+        fill: none !important;
+        stroke: var(--color-primary, #2E2E33) !important;
+      }
+      
+      /* iPad Pro (портрет): увеличить размер соц.кнопок и нижний отступ */
+      @media (orientation: portrait) and (min-width: 1000px) and (max-width: 1080px),
+             (orientation: portrait) and (min-height: 1300px) and (max-height: 1400px) {
+        .curtain-content .contact-buttons { gap: 24px; }
+        .curtain-content .menu-contacts .contact-btn,
+        .curtain-content .contact-buttons .contact-btn { width: 72px; height: 72px; }
+        .curtain-content .menu-contacts .contact-btn svg,
+        .curtain-content .contact-buttons .contact-btn svg { width: 26px; height: 26px; }
+        .curtain-content .menu-contacts-section { margin-bottom: 10px;}
+      }
+      
+      /* Individual button hover colors removed — unified via .contact-btn:hover above */
+
+      /* Hide desktop inner in curtain layout; keep stem visible (panel lives inside stem) */
+      .navc-menu.curtain-open .navc-inner,
+      .menu-container.curtain-open .menu-inner { display: none !important; }
+    }
+
+    /* Disable background blur when curtain menu is open */
+    .navc-menu.curtain-open ~ .page-wrapper,
+    .menu-container.curtain-open ~ .page-wrapper { filter: none !important; }
+
+    /* Inner overlay for smooth horizontal reveal without clip-path jumping */
+    .menu-panel::before, .navc-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        155deg,
+        rgba(98,98,107,1) 0%,
+        rgba(80,80,88,1)  45%,
+        rgba(60,60,68,1)  100%
+      );
+      transform-origin: center center;
+      transform: scaleX(var(--panelScale, 1));
+      will-change: transform;
+      pointer-events: none;
+    }
+
+    /* AO volume overlay на панели меню */
+    .menu-panel::after, .navc-panel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background:
+        /* AO по углам */
+        radial-gradient(ellipse 140px 100px at 0% 0%, rgba(0,0,0,0.22) 0%, transparent 65%),
+        radial-gradient(ellipse 140px 100px at 100% 0%, rgba(0,0,0,0.22) 0%, transparent 65%),
+        radial-gradient(ellipse 140px 80px at 0% 100%, rgba(0,0,0,0.18) 0%, transparent 65%),
+        radial-gradient(ellipse 140px 80px at 100% 100%, rgba(0,0,0,0.18) 0%, transparent 65%),
+        /* Матовый скос — верх светлее */
+        linear-gradient(to bottom, rgba(255,255,255,0.04) 0%, transparent 20%, rgba(0,0,0,0.08) 100%);
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .menu-inner, .navc-inner {
+      width: 100%;
+      height: 70vh;
+      display: flex;
+      flex-direction: column;
+      padding: 100px 60px 4px;
+      opacity: 0;
+      transform: none;
+      transition: opacity 0.35s ease;
+      z-index: 21;
+      background: transparent;
+      will-change: opacity;
+    }
+
+    /* .show-content removed - unused class */
+
+    .navc-menu-logo {
+      position: absolute;
+      top: 56px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: transparent;
+      border-radius: 18px;
+      padding: 8px 16px;
+      box-shadow: none;
+      z-index: 22;
+    }
+    .navc-menu-logo img {
+      height: 160px !important;
+      width: auto !important;
+    }
+
+    .menu-top-section {
+      display: flex;
+      justify-content: space-between;
+      flex: 1;
+      padding: 140px 40px 24px;
+    }
+
+    .menu-left,
+    .menu-right {
+      flex: 1;
+      z-index: 2;
+    }
+
+    .menu-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-right: 30px;
+    }
+
+    .menu-left h2 {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      font-weight: var(--font-weight-normal);
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wide);
+      margin-bottom: 1.875rem;
+      color: var(--menu-text);
+      text-align: left;
+    }
+    
+    .menu-right h2 {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      font-weight: var(--font-weight-normal);
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wide);
+      margin-bottom: 1.875rem;
+      color: var(--menu-text);
+      text-align: center;
+      width: 100%;
+    }
+
+    .menu-left ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      margin-top: 1.25rem;
+      flex: 0 0 auto;
+    }
+
+    .menu-left li {
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .menu-left li,
+    #page-footer .footer-nav li {
+      perspective: 600px;
+    }
+
+    .menu-left a,
+    #page-footer .footer-nav a {
+      text-decoration: none;
+      display: inline-block;
+      position: relative;
+      overflow: hidden;
+      padding: 0.3em 0;
+      transition: color 0.35s ease;
+    }
+
+    .menu-left a {
+      color: var(--color-text-primary);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-light);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .menu-left a::before,
+    #page-footer .footer-nav a::before {
+      content: attr(data-hover);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      color: var(--color-text-white);
+      transform: translateY(-100%) rotateX(90deg);
+      transform-origin: bottom center;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .menu-left a span,
+    #page-footer .footer-nav a span {
+      display: inline-block;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-origin: top center;
+    }
+
+    .menu-left a:hover span,
+    #page-footer .footer-nav a:hover span {
+      transform: translateY(100%) rotateX(-90deg);
+    }
+
+    .menu-left a:hover::before,
+    #page-footer .footer-nav a:hover::before {
+      transform: translateY(0) rotateX(0deg);
+    }
+
+    .menu-left a::after,
+    #page-footer .footer-nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: rgba(245, 240, 235, 0.7);
+      transform: scaleX(0);
+      transform-origin: center center;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) 0.15s;
+    }
+
+    .menu-left a:hover::after,
+    #page-footer .footer-nav a:hover::after {
+      transform: scaleX(1);
+    }
+
+    /* Соц. кнопки в меню — без нижней черты от навигации */
+    .contact-btn::after,
+    .menu-left a.contact-btn::after {
+      display: none !important;
+    }
+
+    .menu-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .menu-right h2 {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      font-weight: var(--font-weight-normal);
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wide);
+      margin-bottom: 0.75rem;
+      color: var(--menu-text);
+      text-align: center;
+      width: 100%;
+      margin-top: 0;
+      flex: 0 0 auto;
+    }
+
+    /* Блог контейнер с прокруткой */
+    .blog-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    /* Нео scroll area — вдавленная панель */
+    .blog-scroll-area {
+      height: var(--blog-scroll-height);
+      width: var(--blog-scroll-width);
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 0.85rem;
+      margin-right: -0.5rem;
+      scroll-behavior: smooth;
+      border: none;
+      border-radius: var(--menu-border-radius-small);
+      background: var(--color-primary);
+      box-shadow: var(--neo-inset-sm);
+      margin-top: 0.75rem;
+    }
+
+    .blog-scroll-area::-webkit-scrollbar { width: 3px; }
+    .blog-scroll-area::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .blog-scroll-area::-webkit-scrollbar-thumb {
+      background: rgba(141,90,151,0.3);
+      border-radius: 2px;
+    }
+    .blog-scroll-area::-webkit-scrollbar-thumb:hover {
+      background: rgba(141,90,151,0.55);
+    }
+    .blog-scroll-area {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(141,90,151,0.3) transparent;
+    }
+
+    /* Нео блог-карточка — поднятая, тени тёмные слева/сверху */
+    .blog-article {
+      display: flex;
+      gap: var(--blog-article-gap);
+      margin-bottom: 0.75rem;
+      padding: 0.85rem;
+      background: var(--color-primary);
+      border-radius: 14px;
+      border: none;
+      position: relative;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+      cursor: pointer;
+      box-shadow: 2px 2px 7px #1e1e22, -2px -2px 7px #1e1e22;
+    }
+    /* Объёмная рамка карточки */
+    .blog-article::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      border-left: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(0,0,0,0.30);
+      border-right: 1px solid rgba(0,0,0,0.18);
+      pointer-events: none;
+    }
+    .blog-article:hover {
+      box-shadow: 3px 3px 10px #1e1e22, -3px -3px 10px #1e1e22;
+      transform: translateY(-1px);
+    }
+    .blog-article:last-child { margin-bottom: 0; }
+
+    .article-thumbnail {
+      flex-shrink: 0;
+      width: var(--blog-thumbnail-size);
+      height: var(--blog-thumbnail-size);
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--color-primary);
+      box-shadow: var(--neo-inset-xs);
+    }
+    .article-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .article-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      justify-content: space-between;
+    }
+    .blog-stub .article-content {
+      padding-right: 4.5rem;
+    }
+
+    .article-title {
+      font-size: var(--blog-title-size);
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin: 0 0 0.4rem 0;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-word;
+    }
+    .article-preview {
+      font-size: var(--blog-preview-size);
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+      margin: 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-word;
+    }
+
+    /* Заглушка */
+    .blog-stub { opacity: 1; }
+    .blog-stub .stub-placeholder-icon {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-primary);
+      border-radius: 8px;
+    }
+    .blog-stub .stub-placeholder-icon svg {
+      width: 40%;
+      height: 40%;
+      fill: var(--color-accent);
+      opacity: 0.45;
+    }
+    /* Нео бейдж «Скоро» — чуть правее и выше */
+    .blog-stub .stub-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin-right: -3px;
+      margin-top: -2px;
+      background: var(--color-primary);
+      border: none;
+      color: var(--color-accent);
+      padding: 0.2rem 0.65rem;
+      border-radius: 10px;
+      font-size: 0.65rem;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+      z-index: 1;
+      box-shadow: var(--neo-raised-xs);
+    }
+
+    /* iPad Air и уже: скрыть бейдж «Скоро», адаптивность заголовка и описания */
+    @media (max-width: 820px) {
+      .blog-stub .stub-badge {
+        display: none !important;
+      }
+      .blog-stub .article-content,
+      .curtain-content .blog-stub .article-content {
+        padding-right: 0.5rem !important;
+      }
+      .article-title,
+      .curtain-content .blog-stub .article-title {
+        font-size: clamp(0.8rem, 2.2vw, 1rem);
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+      }
+      .article-preview,
+      .curtain-content .blog-stub .article-preview {
+        font-size: clamp(0.72rem, 1.9vw, 0.875rem);
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+      }
+    }
+
+    /* Мобильные: заголовок чуть меньше, описание 2 строки, начало текста левее */
+    @media (max-width: 480px) {
+      .article-title,
+      .curtain-content .blog-stub .article-title {
+        font-size: clamp(0.7rem, 3.5vw, 0.85rem);
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+      }
+      .article-preview,
+      .curtain-content .blog-stub .article-preview {
+        font-size: clamp(0.7rem, 2vw, 0.8rem);
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+      }
+      .article-content,
+      .curtain-content .blog-stub .article-content {
+        padding-left: 0.25rem !important;
+        padding-right: 0.5rem !important;
+      }
+      .curtain-content .blog-stub {
+        padding-left: 0.5rem !important;
+      }
+      .curtain-content .blog-article {
+        gap: 0.65rem !important;
+      }
+    }
+
+    /* Контакты в левой половине */
+    .menu-contacts-section {
+      width: 100%;
+      margin-top: auto;
+      padding-top: 20px;
+      margin-bottom: 24px;
+      border-top: 1px solid rgba(245, 240, 235, 0.12);
+      flex: 0 0 auto;
+    }
+
+    .menu-contacts {
+      display: block;
+      text-align: center;
+    }
+
+    .contact-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, auto);
+      gap: var(--contact-btn-gap-tablet);
+      justify-content: center;
+      align-items: center;
+      width: auto;
+      margin: 0 auto;
+    }
+    
+    @media (max-width: 768px) {
+      .contact-buttons {
+        gap: var(--contact-btn-gap-mobile);
+      }
+    }
+    @media (min-width: 1024px) {
+      .contact-buttons {
+        gap: var(--contact-btn-gap-desktop);
+      }
+    }
+
+    .contact-btn {
+      position: relative;
+      display: block;
+      width: var(--contact-btn-size);
+      height: var(--contact-btn-size);
+      border-radius: 50%;
+      /* Вдавленная кнопка — углубление в поверхности панели */
+      background: rgba(0,0,0,0.25);
+      border: 0.5px solid rgba(255,255,255,0.07);
+      color: var(--color-text-white);
+      text-decoration: none;
+      transition: all 0.18s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      box-shadow:
+        inset 0 2px 5px rgba(0,0,0,0.45),
+        inset 0 1px 2px rgba(0,0,0,0.3),
+        inset 0 -1px 0 rgba(255,255,255,0.04),
+        0 1px 0 rgba(255,255,255,0.06);
+      flex-shrink: 0;
+      padding: 0;
+      margin: 0;
+      line-height: 0;
+      font-size: 0;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+
+    .contact-btn:hover {
+      background: var(--color-accent);
+      color: var(--color-text-white);
+      border-color: rgba(141,90,151,0.4);
+      box-shadow:
+        inset 0 2px 6px rgba(46,46,51,0.5),
+        inset 0 -1px 0 rgba(255,255,255,0.06),
+        0 0 0 2px rgba(141,90,151,0.12);
+    }
+    
+    .contact-btn:active {
+      transform: scale(0.94);
+      box-shadow:
+        inset 0 4px 10px rgba(0,0,0,0.55),
+        inset 0 2px 4px rgba(0,0,0,0.4);
+    }
+    
+    .contact-btn:hover svg {
+      color: var(--color-primary, #2E2E33) !important;
+      fill: var(--color-primary, #2E2E33) !important;
+    }
+    .contact-btn.email-btn:hover svg,
+    .contact-btn.booking-btn:hover svg {
+      fill: none !important;
+      stroke: var(--color-primary, #2E2E33) !important;
+    }
+
+    .contact-btn svg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: var(--contact-btn-icon-size);
+      height: var(--contact-btn-icon-size);
+      display: block;
+      transition: all 0.15s ease;
+    }
+
+    .contact-btn:hover svg {
+      transform: translate(-50%, -50%) scale(0.95);
+    }
+
+    body.lock-scroll {
+      overflow: hidden;
+      height: 100vh;
+      overscroll-behavior: none;
+    }
+
+    /* iPad Pro в горизонтальной ориентации - оптимизация размеров панели */
+    @media (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) {
+      .menu-container.active, .navc-menu.active {
+        height: 73vh !important;
+      }
+      .menu-container, .navc-menu {
+        width: calc(100vw - 80px);
+        left: 40px;
+      }
+      
+      .menu-panel, .navc-panel {
+        border-radius: 50px;
+        overflow: hidden;
+      }
+      
+      .menu-inner, .navc-inner {
+        height: 73vh !important;
+        padding: 90px 50px 2px !important;
+      }
+      .menu-top-section { align-items: stretch; }
+      .menu-left, .menu-right { display: flex; flex-direction: column; }
+      .menu-left { align-items: stretch; justify-content: flex-start; height: 100%; }
+      .menu-left h2 { text-align: center; flex: 0 0 auto; }
+      .menu-left ul { margin-top: 20px; flex: 0 0 auto; }
+      .menu-left li { text-align: center; }
+      .menu-contacts-section { margin-top: auto; padding-top: 8px !important; margin-bottom: 0px !important; flex: 0 0 auto; }
+      .contact-buttons { justify-content: center; }
+      .menu-right { justify-content: flex-start; }
+      .menu-right h2 { text-align: center; margin-bottom: 0.75rem; flex: 0 0 auto; }
+      .menu-right { padding-right: 30px; }
+      .menu-right .blog-container { margin-top: auto; flex: 0 0 auto; }
+      .blog-scroll-area {
+        width: 100%;
+        margin-right: 0;
+        max-height: 40vh;
+        padding-right: 1rem;
+      }
+      .menu-right .article-thumbnail {
+        width: 5.5rem;
+        height: 5.5rem;
+        flex-shrink: 0;
+      }
+      .menu-right .article-title {
+        font-size: 0.95rem;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .menu-right .article-preview {
+        font-size: 0.85rem;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .menu-right .blog-article {
+        padding: 0.85rem;
+        margin-bottom: 0.85rem;
+      }
+    }
+
+    /* iPad mini в горизонтали (~1133px): левый столбец (меню+соцкнопки), правый столбец (мини‑блог) */
+    @media (min-width: 1024px) and (max-width: 1135px) and (orientation: landscape) {
+      .menu-container.active, .navc-menu.active {
+        height: 73vh !important;
+      }
+      .menu-container, .navc-menu {
+        width: calc(100vw - 20px);
+        left: 10px;
+      }
+      
+      .menu-panel, .navc-panel {
+        border-radius: 50px;
+        overflow: hidden;
+      }
+      
+      .menu-inner, .navc-inner {
+        height: 73vh !important;
+        padding: 90px 40px 2px !important;
+      }
+      
+      .menu-top-section { justify-content: space-between; gap: 20px; align-items: stretch; }
+      .menu-left, .menu-right { display: flex; flex-direction: column; }
+      .menu-left { align-items: stretch; justify-content: flex-start; height: 100%; }
+      .menu-left h2 { text-align: center; margin-bottom: 1.1rem; flex: 0 0 auto; }
+      .menu-left ul { margin-top: 12px; flex: 0 0 auto; }
+      .menu-left li { margin-bottom: 0.9rem; text-align: center; }
+      .menu-left a { font-size: 1.05rem; }
+
+      .menu-contacts-section { margin-top: auto; padding-top: 8px !important; margin-bottom: 0px !important; flex: 0 0 auto; }
+      .menu-contacts { text-align: center; }
+      .contact-buttons { justify-content: center; gap: 0.8rem; }
+
+      .menu-right { justify-content: flex-start; }
+      .menu-right h2 { text-align: center; margin-bottom: 0.75rem; flex: 0 0 auto; }
+      .menu-right { padding-right: 20px; }
+      .menu-right .blog-container { margin-top: auto; flex: 0 0 auto; }
+      .blog-scroll-area { max-height: 40vh; width: 100%; margin-right: 0; margin-left: 0; padding-right: 1rem; }
+      .menu-right .article-thumbnail {
+        width: 5rem;
+        height: 5rem;
+        flex-shrink: 0;
+      }
+      .menu-right .article-title {
+        font-size: 0.9rem;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .menu-right .article-preview {
+        font-size: 0.8rem;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .menu-right .blog-article {
+        padding: 0.8rem;
+        margin-bottom: 0.8rem;
+      }
+    }
+
+    /* iPad Air в горизонтальной ориентации (~1180px): уменьшить отступы и подогнать высоту мини‑блога */
+    @media (min-width: 1136px) and (max-width: 1180px) and (orientation: landscape) {
+      .menu-container.active, .navc-menu.active {
+        height: 73vh !important;
+      }
+      .menu-container, .navc-menu {
+        width: calc(100vw - 60px);
+        left: 30px;
+      }
+      
+      .menu-panel, .navc-panel {
+        border-radius: 50px;
+        overflow: hidden;
+      }
+      
+      .menu-inner, .navc-inner {
+        height: 73vh !important;
+        padding: 90px 45px 2px !important;
+      }
+      
+      .menu-top-section { align-items: stretch; }
+      .menu-left, .menu-right { padding: 28px; display: flex; flex-direction: column; }
+      .menu-left { align-items: stretch; justify-content: flex-start; height: 100%; }
+      .menu-left h2 { text-align: center; margin-bottom: 1.6rem; flex: 0 0 auto; }
+      .menu-left .navc-links { margin-top: 16px !important; flex: 0 0 auto; }
+      .menu-left li { margin-bottom: 0.95rem; text-align: center; }
+      .menu-contacts-section { margin-top: auto; padding-top: 8px !important; margin-bottom: 0px !important; flex: 0 0 auto; }
+      .contact-buttons { gap: 1rem; justify-content: center; }
+      .menu-right { justify-content: flex-start; }
+      .menu-right h2 { text-align: center; margin-bottom: 0.75rem; flex: 0 0 auto; }
+      .menu-right { padding-right: 30px; }
+      .menu-right .blog-container { margin-top: auto; flex: 0 0 auto; }
+      .blog-scroll-area { max-height: 40vh; width: 100%; margin-right: 0; padding-right: 1rem; }
+      .menu-right .article-thumbnail {
+        width: 5.25rem;
+        height: 5.25rem;
+        flex-shrink: 0;
+      }
+      .menu-right .article-title {
+        font-size: 0.925rem;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .menu-right .article-preview {
+        font-size: 0.825rem;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .menu-right .blog-article {
+        padding: 0.825rem;
+        margin-bottom: 0.825rem;
+      }
+    }
+
+    /* Footer: отключаем rotation + line на мобильных (как у меню в curtain) */
+    @media (max-width: 768px) {
+      #page-footer .footer-nav li {
+        perspective: none;
+      }
+      #page-footer .footer-nav a {
+        overflow: visible;
+        padding: 0;
+      }
+      #page-footer .footer-nav a::before {
+        display: none;
+      }
+      #page-footer .footer-nav a span {
+        transform: none;
+        transition: none;
+      }
+      #page-footer .footer-nav a::after {
+        display: none;
+      }
+    }

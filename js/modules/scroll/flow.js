@@ -1,0 +1,385 @@
+/**
+ * Анимация скролла футера
+ * Плавное раскрытие футера при скролле
+ */
+
+import { $, debounce, waitForLibrary, isMobileDevice} from '../../core/utils.js';
+import { CONFIG } from '../../core/config.js';
+import { getErrorHandler, ERROR_SEVERITY } from '../../core/errors.js';
+import { EVENTS } from '../../core/constants.js';
+import { gsap, ScrollTrigger } from '../../lib.js';
+
+/**
+ * Класс анимации скролла футера
+ */
+export class ScrollFlow {
+  constructor(options = {}) {
+    this.options = {
+      contactsSelector: options.contactsSelector || '#contacts',
+      footerSelector: options.footerSelector || '#page-footer',
+      wrapSelector: options.wrapSelector || '#revealWrap',
+      ...options
+    };
+
+    this.contacts = null;
+    this.footer = null;
+    this.wrap = null;
+    this.scrollTrigger = null;
+    this.resizeTimeout = null;
+    this.footerHeight = 0; // Кэш высоты футера
+    this.contactsBaseHeight = 0; // Базовая высота контактов (без аккордеонов)
+    this.debouncedResize = null; // Для очистки обработчика resize
+  }
+
+  /**
+   * Инициализация анимации
+   */
+  init() {
+    // Проверяем наличие GSAP и ScrollTrigger
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+      const errorHandler = getErrorHandler();
+      errorHandler.handle(new Error('GSAP or ScrollTrigger not available'), {
+        module: 'scroll-flow',
+        severity: ERROR_SEVERITY.MEDIUM,
+        context: { action: 'init' },
+        userMessage: null
+      });
+      return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Находим элементы
+    this.contacts = $(this.options.contactsSelector);
+    this.footer = $(this.options.footerSelector);
+    this.wrap = $(this.options.wrapSelector);
+
+    if (!this.contacts || !this.footer || !this.wrap) {
+      // На некоторых страницах элементы могут отсутствовать - это нормально
+      // Не логируем ошибку, просто выходим
+      return;
+    }
+    
+    // ВАЖНО: Устанавливаем clipPath СРАЗУ при инициализации, до создания ScrollTrigger
+    // Это предотвращает появление белой полосы на всех страницах
+    // Используем СИНХРОННЫЙ вызов для немедленного применения
+    gsap.set(this.footer, {
+      clipPath: 'inset(100% 0 0 0)', // Скрыт сверху (полностью) - СИНХРОННО!
+      visibility: 'visible'
+    });
+
+    // Если есть прелоадер — ждём его завершения, чтобы создать ScrollTrigger уже на финальной позиции скролла
+    // Кэшируем элемент прелоадера
+    const preloaderElement = document.getElementById('preloader');
+    const hasPreloader = !!preloaderElement;
+    if (hasPreloader) {
+      const onPreloaderDone = () => {
+        // Небольшая задержка для стабильности layout и восстановления позиции скролла (Lenis/Native)
+        setTimeout(() => {
+          this.initScrollTrigger();
+          // НЕ вызываем ScrollTrigger.refresh() здесь, так как:
+          // 1. initScrollTrigger() создает новый ScrollTrigger, который автоматически обновляется
+          // 2. Вызов refresh() здесь может создать цикл с scroll-protection.js
+          // 3. ScrollTrigger сам обновляется через ScrollTrigger.update() в scroll handler
+        }, 50);
+      };
+      window.addEventListener(EVENTS.PRELOADER_COMPLETE, onPreloaderDone, { once: true });
+    } else {
+      // Без прелоадера — инициируем сразу
+      this.initScrollTrigger();
+    }
+
+    // Обработка изменения размера окна
+    this.setupResizeHandler();
+
+    // Обработка смены ориентации
+    this.setupOrientationHandler();
+
+    // ScrollFlow initialized
+  }
+
+  /**
+   * Инициализация ScrollTrigger
+   */
+  initScrollTrigger() {
+    // Удаляем существующий ScrollTrigger если есть
+    // Важно: делаем это синхронно, чтобы избежать конфликтов
+    // ВАЖНО: сохраняем clipPath при удалении, чтобы избежать белой полосы
+    if (this.scrollTrigger) {
+      try {
+        // Сохраняем текущий clipPath перед удалением
+        const currentClipPath = gsap.getProperty(this.footer, 'clipPath');
+        this.scrollTrigger.kill();
+        // Восстанавливаем clipPath сразу после удаления, чтобы избежать белой полосы
+        if (currentClipPath) {
+          gsap.set(this.footer, { clipPath: currentClipPath });
+        } else {
+          // Если clipPath не был установлен, устанавливаем по умолчанию
+          gsap.set(this.footer, { clipPath: 'inset(100% 0 0 0)' });
+        }
+      } catch (e) {
+        // console.warn('Error killing scroll trigger:', e); // DEBUG: отключено
+        // В случае ошибки все равно устанавливаем clipPath
+        gsap.set(this.footer, { clipPath: 'inset(100% 0 0 0)' });
+      }
+      this.scrollTrigger = null;
+    }
+
+    // Сброс состояний перед инициализацией
+    // ВАЖНО: устанавливаем clipPath СИНХРОННО, до requestAnimationFrame
+    // чтобы избежать появления белой полосы (белый фон #contacts виден поверх черного фона #revealWrap)
+    // clipPath уже установлен в init(), но переустанавливаем для гарантии
+    
+    // Сохраняем текущий прогресс перед сбросом (если ScrollTrigger уже был создан)
+    let savedProgress = 0;
+    if (this.scrollTrigger) {
+      savedProgress = this.scrollTrigger.progress || 0;
+    }
+    
+    // Устанавливаем clipPath на основе сохраненного прогресса (если есть)
+    // или полностью скрываем, если это первая инициализация
+    const clipValue = savedProgress > 0 ? 100 - savedProgress * 100 : 100;
+    gsap.set(this.footer, {
+      clipPath: `inset(${clipValue}% 0 0 0)`, // Синхронно устанавливаем clipPath
+      visibility: 'visible',
+      clearProps: 'transform' // Очищаем возможные трансформации, но НЕ clipPath!
+    });
+    
+    // Устанавливаем force3D один раз для GPU ускорения (не в onUpdate)
+    // Сбрасываем позицию contacts, чтобы избежать артефактов
+    gsap.set(this.contacts, { 
+      y: 0,
+      force3D: true, // GPU ускорение для плавности
+      clearProps: 'transform' // Очищаем возможные трансформации
+    });
+    
+    // Убеждаемся, что wrap имеет правильный z-index и overflow
+    if (this.wrap) {
+      gsap.set(this.wrap, {
+        clearProps: 'transform' // Очищаем возможные трансформации
+      });
+    }
+
+    // Кэшируем высоту футера ДО создания ScrollTrigger
+    // Используем requestAnimationFrame для корректного расчета размеров после layout
+    // НО clipPath уже установлен синхронно выше, поэтому белая полоса не появится
+    requestAnimationFrame(() => {
+      // Кэшируем высоту футера один раз
+      this.footerHeight = this.footer.offsetHeight;
+      // Сохраняем базовую высоту контактов (для расчета изменений от аккордеонов)
+      this.contactsBaseHeight = this.contacts.offsetHeight;
+      
+      // Создание ScrollTrigger для анимации футера
+      this.scrollTrigger = ScrollTrigger.create({
+        trigger: this.contacts,
+        start: 'bottom bottom', // Когда нижняя граница контактов отрывается от низа viewport
+        end: () => `+=${this.footerHeight}`, // Длительность = высота футера
+        scrub: true, // Жесткая привязка к скроллу
+        pin: this.wrap, // Фиксируем обертку на время анимации
+        pinSpacing: true, // Добавляем отступы для корректного скролла
+        anticipatePin: 1, // Предсказание для плавности
+        invalidateOnRefresh: true, // Пересчет при обновлении
+        onUpdate: (self) => {
+          const progress = self.progress;
+
+          // Раскрытие футера снизу вверх
+          const clipValue = 100 - progress * 100;
+          
+          // ВАЖНО: Всегда устанавливаем clipPath синхронно в onUpdate
+          // Это гарантирует, что белый фон #contacts не будет виден поверх черного #revealWrap
+          // Также динамически изменяем z-index футера, чтобы он был выше контактов при раскрытии
+          gsap.set(this.footer, {
+            clipPath: `inset(${clipValue}% 0 0 0)`,
+            zIndex: progress > 0 ? 3 : 1 // Футер выше контактов при раскрытии
+          });
+
+          // Сдвиг секции контактов вверх (параллакс эффект)
+          // Используем фиксированную высоту футера для сдвига контактов
+          // Изменение высоты контактов из-за аккордеонов не должно влиять на сдвиг
+          // так как это уже учтено в расчете end
+          const yValue = -this.footerHeight * progress;
+          gsap.set(this.contacts, {
+            y: yValue
+            // force3D уже установлен выше, не нужно устанавливать в onUpdate
+          });
+        },
+        onRefresh: () => {
+          // При обновлении пересчитываем размеры и обновляем кэш
+          // НЕ вызываем this.scrollTrigger.refresh() здесь, так как это создает рекурсию
+          // onRefresh вызывается ВО ВРЕМЯ ScrollTrigger.refresh(), и повторный вызов refresh() создает цикл
+          this.footerHeight = this.footer.offsetHeight;
+          // Обновляем базовую высоту контактов на текущую
+          // Это важно, когда аккордеоны сворачиваются/разворачиваются
+          // ScrollTrigger пересчитает start/end на основе текущей высоты trigger (contacts)
+          if (this.contacts) {
+            this.contactsBaseHeight = this.contacts.offsetHeight;
+          }
+          
+          // ВАЖНО: ВСЕГДА сохраняем и восстанавливаем clipPath при обновлении
+          // Это критично для предотвращения белого артефакта на страницах услуг
+          // При скролле вверх или при изменении layout (hero, аккордеоны) ScrollTrigger пересчитывается
+          // и может сбросить clipPath, что приводит к появлению белого фона #contacts поверх черного #revealWrap
+          // Используем requestAnimationFrame для синхронной установки clipPath после завершения refresh()
+          if (this.scrollTrigger) {
+            const currentProgress = this.scrollTrigger.progress || 0;
+            const clipValue = 100 - currentProgress * 100;
+            
+            // Устанавливаем clipPath синхронно в следующем кадре анимации
+            requestAnimationFrame(() => {
+              gsap.set(this.footer, {
+                clipPath: `inset(${clipValue}% 0 0 0)`
+              });
+              
+              // Дополнительное обновление для гарантии синхронизации
+              // Особенно важно при остановке скролла Lenis
+              requestAnimationFrame(() => {
+                if (this.scrollTrigger) {
+                  const finalProgress = this.scrollTrigger.progress || 0;
+                  const finalClipValue = 100 - finalProgress * 100;
+                  gsap.set(this.footer, {
+                    clipPath: `inset(${finalClipValue}% 0 0 0)`
+                  });
+                }
+              });
+            });
+          }
+        }
+      });
+    });
+  }
+
+  /**
+   * Настройка обработчика изменения размера
+   */
+  setupResizeHandler() {
+    const isMobile = isMobileDevice();
+    // На мобильных устройствах НЕ добавляем resize handler, так как:
+    // 1. На мобильных viewport изменяется при скролле (скрытие/появление адресной строки)
+    // 2. Это вызывает множественные resize события, которые создают новые ScrollTrigger
+    // 3. Это вызывает множественные refresh(), которые создают дергания и остановки скролла
+    // 4. ScrollTrigger уже обновляется через ScrollTrigger.update() в scroll handler
+    if (isMobile) {
+      return; // Не добавляем resize handler для мобильных устройств
+    }
+    
+    // Сохраняем debounced функцию для возможности очистки
+    this.debouncedResize = debounce(() => {
+      // Пересоздаем ScrollTrigger при изменении размера
+      // Высота футера будет пересчитана в initScrollTrigger
+      this.initScrollTrigger();
+    }, CONFIG.DELAYS.RESIZE);
+
+    window.addEventListener('resize', this.debouncedResize);
+  }
+
+  /**
+   * Настройка обработчика смены ориентации
+   */
+  setupOrientationHandler() {
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => {
+        this.initScrollTrigger();
+        // НЕ вызываем ScrollTrigger.refresh() здесь, так как:
+        // 1. initScrollTrigger() создает новый ScrollTrigger, который автоматически обновляется
+        // 2. Вызов refresh() здесь может создать цикл с scroll-protection.js
+        // 3. ScrollTrigger сам обновляется через ScrollTrigger.update() в scroll handler
+      }, 100);
+    });
+  }
+
+  /**
+   * Обновление анимации
+   */
+  refresh() {
+    if (this.scrollTrigger) {
+      // Обновляем высоту футера
+      if (this.footer) {
+        this.footerHeight = this.footer.offsetHeight;
+      }
+      // Обновляем базовую высоту контактов на текущую
+      // Это важно, когда аккордеоны сворачиваются/разворачиваются
+      // ScrollTrigger пересчитает start/end на основе текущей высоты trigger (contacts)
+      if (this.contacts) {
+        this.contactsBaseHeight = this.contacts.offsetHeight;
+      }
+      this.scrollTrigger.refresh();
+    }
+  }
+
+  /**
+   * Уничтожение анимации
+   */
+  destroy() {
+    if (this.scrollTrigger) {
+      this.scrollTrigger.kill();
+      this.scrollTrigger = null;
+    }
+
+    // Удаляем обработчик resize
+    if (this.debouncedResize) {
+      window.removeEventListener('resize', this.debouncedResize);
+      this.debouncedResize = null;
+    }
+
+    // Сбрасываем стили
+    if (this.footer) {
+      gsap.set(this.footer, { clearProps: 'clipPath,visibility' });
+    }
+    if (this.contacts) {
+      gsap.set(this.contacts, { clearProps: 'y,force3D' });
+    }
+
+    // Очищаем таймеры
+    if (this.resizeTimeout) {
+      clearTimeout(this.resizeTimeout);
+      this.resizeTimeout = null;
+    }
+
+    // Очищаем кэш
+    this.footerHeight = 0;
+  }
+}
+
+/**
+ * Инициализация анимации скролла футера
+ */
+let scrollFlowInstance = null;
+
+export function initScrollFlow(options) {
+  if (scrollFlowInstance) {
+    return scrollFlowInstance;
+  }
+
+  scrollFlowInstance = new ScrollFlow(options);
+  
+  // Экспортируем экземпляр в window для доступа из других модулей
+  if (typeof window !== 'undefined') {
+    window.scrollFlowInstance = scrollFlowInstance;
+  }
+
+  // Ждем загрузки DOM и GSAP
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      // Ждем загрузки GSAP
+      Promise.resolve().then(() => scrollFlowInstance.init());
+    });
+  } else {
+    if (true /* gsap imported */) {
+      scrollFlowInstance.init();
+    }
+  }
+
+  return scrollFlowInstance;
+}
+
+// Автоматическая инициализация если модуль загружен напрямую
+if (typeof window !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      initScrollFlow();
+    });
+  } else {
+    initScrollFlow();
+  }
+}
+

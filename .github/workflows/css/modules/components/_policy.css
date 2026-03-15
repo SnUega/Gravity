@@ -1,0 +1,205 @@
+/* ============================================
+   Policy Page — оформление в стиле проекта
+   ============================================ */
+
+.body-policy {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-primary, 'Unbounded', sans-serif);
+}
+
+/* Шапка: на всю ширину, непрозрачная, кнопка назад и логотип по центру */
+.policy-header {
+  flex-shrink: 0;
+  background: #5a5a62;
+  border-bottom: 1px solid var(--color-border-light);
+  padding: 1.25rem 1.25rem;
+  min-height: 88px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.policy-header__inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  position: relative;
+}
+
+.policy-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+  padding: 0.35rem 0.5rem;
+  border-radius: 8px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.policy-back:hover {
+  background: rgba(141,90,151,0.08);
+  color: var(--color-text-white);
+}
+
+.policy-back svg {
+  flex-shrink: 0;
+}
+
+.policy-header__logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: block;
+  line-height: 0;
+}
+
+.policy-header__logo img {
+  display: block;
+  height: 72px;
+  width: auto;
+  max-width: 320px;
+  object-fit: contain;
+}
+
+.policy-header__spacer {
+  width: 5.5rem;
+  flex-shrink: 0;
+  visibility: hidden;
+}
+
+/* Контент политики — типографика как в проекте */
+.policy-main {
+  flex: 1;
+  padding: clamp(1.5rem, 4vw, 3rem) var(--spacing-container, 8%) clamp(2rem, 5vw, 3rem);
+}
+
+.policy-article {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.policy-title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: var(--font-weight-normal);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  line-height: var(--line-height-tight);
+  margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+}
+
+.policy-updated {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: 2rem;
+}
+
+.policy-section {
+  margin-bottom: 2rem;
+}
+
+.policy-section h2 {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: var(--font-weight-normal);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  line-height: var(--line-height-tight);
+  margin-bottom: 0.75rem;
+  color: var(--color-text-primary);
+}
+
+.policy-section p,
+.policy-section ul {
+  margin-bottom: 1rem;
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+  font-size: var(--font-size-sm);
+}
+
+.policy-section ul {
+  padding-left: 1.5rem;
+}
+
+.policy-section li {
+  margin-bottom: 0.5rem;
+}
+
+.policy-section a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.policy-section a:hover {
+  color: var(--color-accent-hover);
+}
+
+/* Футер: full-logo и word в одну строку по центру */
+.policy-footer {
+  flex-shrink: 0;
+  background: var(--color-primary);
+  border-top: 1px solid rgba(0,0,0,0.30);
+  padding: 1.5rem 1rem;
+}
+
+.policy-footer__inner {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.policy-footer__brand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.policy-footer__logo-img,
+.policy-footer__word {
+  display: block;
+  height: 52px;
+  width: auto;
+  object-fit: contain;
+  opacity: 0.92;
+}
+
+.policy-footer__logo-img {
+  max-width: 120px;
+}
+
+.policy-footer__word {
+  max-width: 260px;
+}
+
+.policy-footer__copy {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: rgba(160, 160, 166, 0.45);
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.policy-footer__home {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-footer);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+
+.policy-footer__home:hover {
+  color: var(--color-text-primary);
+  text-decoration: underline;
+}

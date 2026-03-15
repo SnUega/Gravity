@@ -1,0 +1,1722 @@
+/* ALR Section — Sterile Techno-Minimalism */
+#alr { 
+  height: 100vh; 
+  background: var(--gradient-section-upper); 
+  position: relative;
+  overflow: hidden;
+}
+
+/* Широкие экраны: фон секции чуть светлее (на пару тонов) */
+@media (min-width: 769px) {
+  #alr {
+    background: linear-gradient(160deg, #404046 0%, #3b3b41 40%, rgba(40, 40, 47, 0.97) 100%);
+  }
+}
+
+.alr-container { 
+  height: 100%; 
+  position: relative;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.05); }
+}
+
+.alr-col.loading { animation: pulse 2s infinite; }
+.alr-col.loaded  { animation: fadeInUp 0.6s ease-out; }
+
+/* Зазор между панелями — нео-шов */
+.alr-wrap { 
+  display: grid; 
+  grid-template-columns: repeat(3, 1fr); 
+  height: 100vh; 
+  position: relative;
+  gap: 2px;
+  background: #1e1e22;
+}
+
+/* Базовая панель ALR — чистый нео-блок */
+.alr-col { 
+  background: var(--color-primary);
+  border: none;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  will-change: transform;
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: none;
+}
+
+/* Объёмная рамка каждой панели */
+.alr-col::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid rgba(0,0,0,0.30);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Hover — панель поднимается */
+.alr-col:nth-child(1):hover {
+  transform: translateY(-4px) translateX(2px) scale(1.015);
+  z-index: 10;
+  box-shadow: 6px 8px 24px #1e1e22, -2px -2px 12px #1e1e22;
+}
+.alr-col:nth-child(2):hover {
+  transform: translateY(-4px) scale(1.015);
+  z-index: 10;
+  box-shadow: 0 8px 24px #1e1e22, 0 -2px 12px #1e1e22;
+}
+.alr-col:nth-child(3):hover {
+  transform: translateY(-4px) translateX(-2px) scale(1.015);
+  z-index: 10;
+  box-shadow: -6px 8px 24px #1e1e22, 2px -2px 12px #1e1e22;
+}
+
+.alr-col.opened:hover {
+  transform: none;
+  box-shadow: none;
+  z-index: auto;
+}
+
+
+.alr-hover-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  pointer-events: none;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.alr-col[data-card="awards"] .alr-hover-content {
+  justify-content: flex-end;
+  padding-right: 0;
+  overflow: hidden;
+}
+.alr-col[data-card="licenses"] .alr-hover-content {
+  justify-content: flex-start;
+  padding-left: 0;
+  overflow: hidden;
+}
+
+#alr .alr-card-logo {
+  width: 220% !important;
+  max-width: 780px !important;
+  height: auto !important;
+  min-width: 0;
+  opacity: 0.18;
+  filter: grayscale(1);
+  object-fit: contain;
+  transition: opacity 0.4s ease, transform 0.6s ease, filter 0.4s ease;
+  user-select: none;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+/* Awards: видна только левая половина логотипа */
+#alr .alr-col[data-card="awards"] .alr-card-logo {
+  transform: translateX(49.85%);
+}
+/* Licenses: видна только правая половина логотипа */
+#alr .alr-col[data-card="licenses"] .alr-card-logo {
+  transform: translateX(-49.85%);
+}
+
+/* При наведении на карточку — лого цветной, лёгкое увеличение; небольшая прозрачность, чтобы заголовки читались */
+#alr .alr-col[data-card="awards"]:hover .alr-card-logo {
+  opacity: 0.45;
+  filter: grayscale(0);
+  transform: translateX(49.85%) scale(1.05);
+}
+#alr .alr-col[data-card="licenses"]:hover .alr-card-logo {
+  opacity: 0.45;
+  filter: grayscale(0);
+  transform: translateX(-49.85%) scale(1.05);
+}
+
+/* Slightly darker side card background for better logo visibility */
+.alr-col[data-card="awards"],
+.alr-col[data-card="licenses"] {
+  background: var(--color-bg-dark);
+}
+
+/* Pattern only in text (lower) area of side cards */
+.alr-col[data-card="awards"]::before,
+.alr-col[data-card="licenses"]::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background-image: url('../../img/bg-logo-pattern.JPG');
+  background-size: 180px;
+  background-repeat: repeat;
+  opacity: 0.055;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Rocketship on center card — без luminosity, чтобы не серило */
+.alr-card-rocket {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  filter: none;
+  opacity: 0.55;
+  transition: opacity 0.4s ease;
+  user-select: none;
+  pointer-events: none;
+}
+
+.alr-col:hover .alr-card-rocket {
+  opacity: 0.75;
+}
+
+/* Center card (Отзывы) — без тёмной маски, карточка не «серит» */
+.alr-col[data-card="reviews"] {
+  background: linear-gradient(to bottom, var(--color-bg-dark) 0%, var(--color-bg-lighter) 100%);
+}
+.alr-col[data-card="reviews"]::after {
+  display: none;
+}
+
+
+/* Main content */
+.alr-main-content {
+  position: relative;
+  z-index: 2;
+  padding: var(--alr-content-padding);
+  padding-top: 70%;
+  padding-bottom: 15%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Кнопка всегда внизу карточки */
+.alr-main-content .alr-btn {
+  margin-top: auto;
+}
+
+.alr-col h3 { 
+  font-size: clamp(1.15rem, 2.8vw, 2.75rem); 
+  font-weight: var(--font-weight-light); 
+  margin-bottom: 32px; 
+  color: var(--color-text-primary);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.alr-col p { 
+  font-size: var(--font-size-sm); 
+  line-height: var(--line-height-relaxed); 
+  color: var(--color-text-muted); 
+  margin-bottom: 40px;
+  max-width: 280px;
+}
+
+/* ALR кнопки — нео-поднятые пилюли */
+.alr-btn { 
+  background: var(--color-accent);
+  color: rgba(255,255,255,0.95); 
+  border: none; 
+  padding: 14px 36px; 
+  border-radius: 100px;
+  font-size: var(--font-size-xs); 
+  font-weight: var(--font-weight-normal); 
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  cursor: pointer; 
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: var(--alr-z-overlay);
+  will-change: transform;
+  box-shadow:
+    4px 4px 10px #1e1e22,
+    -4px -4px 10px #424248,
+    inset 0 1px 0 rgba(168,112,180,0.45),
+    inset 0 -1px 0 rgba(60,20,70,0.5);
+  user-select: none;
+  -webkit-user-select: none;
+  min-width: 160px;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.alr-col[data-card="reviews"] .alr-btn {
+  padding: 20px 52px;
+  font-size: clamp(0.875rem, 1.1vw + 0.5rem, 1.125rem);
+  min-width: 220px;
+}
+
+/* Объёмная рамка пилюли */
+.alr-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 100px;
+  border-top: 1px solid rgba(255,255,255,0.22);
+  border-left: 1px solid rgba(255,255,255,0.12);
+  border-bottom: 1px solid rgba(0,0,0,0.40);
+  border-right: 1px solid rgba(0,0,0,0.25);
+  pointer-events: none;
+}
+.alr-btn > * { position: relative; z-index: 1; }
+.alr-btn:hover { 
+  transform: translateY(-2px);
+  box-shadow:
+    5px 5px 14px #1e1e22,
+    -5px -5px 14px #424248,
+    inset 0 1px 0 rgba(168,112,180,0.5),
+    inset 0 -1px 0 rgba(60,20,70,0.55);
+}
+.alr-btn:active {
+  transform: translateY(0);
+  box-shadow:
+    inset 3px 3px 8px rgba(0,0,0,0.45),
+    inset -3px -3px 8px rgba(0,0,0,0.15),
+    inset 0 2px 4px rgba(0,0,0,0.4);
+}
+.alr-btn:active::before {
+  border-top: 1px solid rgba(0,0,0,0.35);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.alr-btn .arrow {
+  font-size: 18px;
+  transition: transform 0.25s ease;
+}
+.alr-btn:hover .arrow { transform: translateX(3px); }
+
+/* Detail panel — чистый фон, flex col со spacer */
+.alr-detail-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-primary);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+  z-index: var(--alr-z-content);
+  clip-path: inset(0 100% 0 0);
+  will-change: clip-path;
+  transition: clip-path 0.6s ease;
+  overflow: hidden;
+}
+
+/* Объёмная рамка detail panel */
+.alr-detail-content::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid rgba(0,0,0,0.30);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.alr-detail-content h3 {
+  margin-top: 18%;
+  margin-bottom: 20px;
+  padding: 0 var(--alr-content-padding);
+  font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+}
+
+/* Вдавленная нео-панель под параграф текста */
+.alr-detail-content p {
+  margin: 0 16px 0;
+  max-width: 380px;
+  padding: 16px 20px;
+  background: var(--color-primary);
+  box-shadow: var(--neo-inset-sm);
+  border-radius: 14px;
+  font-size: clamp(0.72rem, 1vw, 0.85rem);
+  line-height: 1.75;
+  color: var(--color-text-secondary);
+  /* Объёмная рамка inset-панели */
+  border-top: 1px solid rgba(0,0,0,0.25);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Spacer — толкает кнопку вниз */
+.alr-detail-content .alr-btn {
+  margin-top: auto;
+  margin-bottom: 0;
+  position: relative;
+  bottom: auto;
+  left: auto;
+  transform: none;
+  border-radius: 0;
+  /* Кнопка «Назад» — вдавленная полоса внизу, как open в about */
+  width: 100%;
+  min-width: unset;
+  padding: 0.9rem 1rem;
+  background: var(--color-primary);
+  color: var(--color-text-muted);
+  box-shadow: var(--neo-inset-sm);
+  border-top: 1px solid rgba(0,0,0,0.30);
+  border-bottom: none;
+  min-height: 3.5rem;
+}
+.alr-detail-content .alr-btn::before {
+  border-radius: 0 !important;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.alr-detail-content .alr-btn:hover {
+  transform: none;
+  color: var(--color-accent);
+  box-shadow: var(--neo-inset-sm);
+}
+.alr-detail-content .alr-btn:active {
+  box-shadow: var(--neo-inset);
+}
+
+/* Кнопка «Назад» стрелка */
+.alr-back-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.alr-back-arrow {
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+  transform-origin: right center;
+}
+.alr-detail-content .alr-btn:hover .alr-back-arrow {
+  transform: translateX(-4px);
+}
+
+/* Специальное правило для правой карточки - шторка справа налево */
+.alr-col:nth-child(3) .alr-detail-content {
+  clip-path: inset(0 0 0 100%);
+}
+
+/* ALR mobile hint styles moved to modules/components/_mobile-hint.css */
+@media (max-width: 768px) {
+  #alr {
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .alr-wrap {
+    display: flex;
+    height: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    overscroll-behavior-x: contain; /* avoid cascading overscroll */
+    touch-action: pan-x pan-y; /* Разрешаем горизонтальный и вертикальный скролл */
+  }
+  
+  /* Отключаем hover эффекты и transitions на мобильных для плавного скролла */
+  .alr-col {
+    will-change: auto !important;
+    transition: none !important;
+  }
+  
+  .alr-col:hover {
+    transform: none !important;
+    z-index: auto !important;
+    box-shadow: none !important;
+  }
+  
+  .alr-wrap::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+  
+  .alr-col {
+    min-width: 100vw;
+    scroll-snap-align: start;
+    scroll-snap-stop: always; /* don't skip more than one card per swipe */
+    border-radius: 0;
+    flex-shrink: 0;
+  }
+  
+  /* Заголовки и кнопка карточек на мобильных — ниже и крупнее */
+  .alr-main-content {
+    padding-top: calc(70% + 5rem);
+  }
+  .alr-col h3 {
+    /* 7.5vw — крупнее, «ЛИЦЕНЗИИ» помещается на 390px с letter-spacing */
+    font-size: clamp(1.75rem, 7.5vw, 2.8rem);
+    margin-bottom: 16px;
+  }
+  
+  .alr-col p {
+    font-size: 14px;
+    max-width: 320px;
+    margin-bottom: 32px;
+  }
+  
+  .alr-btn {
+    padding: 14px 28px;
+    font-size: 14px;
+    bottom: 12%;
+  }
+  /* На мобильных кнопка «Подробнее» у карточки отзывов — те же размеры, что у остальных */
+  .alr-col[data-card="reviews"] .alr-btn {
+    padding: 14px 28px;
+    font-size: 14px;
+    min-width: 160px;
+  }
+}
+
+/* ALR mobile hint tablet styles moved to modules/components/_mobile-hint.css */
+@media (min-width: 769px) and (max-width: 1024px) and (orientation: portrait),
+       (min-width: 1024px) and (max-width: 1024px) and (orientation: portrait) {
+  #alr {
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .alr-wrap {
+    display: flex;
+    height: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    overscroll-behavior-x: contain; /* avoid cascading overscroll */
+    touch-action: pan-x pan-y; /* Разрешаем горизонтальный и вертикальный скролл */
+  }
+  
+  /* Отключаем hover эффекты и transitions на планшетах для плавного скролла */
+  .alr-col {
+    will-change: auto !important;
+    transition: none !important;
+  }
+  
+  .alr-col:hover {
+    transform: none !important;
+    z-index: auto !important;
+    box-shadow: none !important;
+  }
+  
+  .alr-wrap::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+  
+  .alr-col {
+    min-width: 100vw;
+    scroll-snap-align: start;
+    scroll-snap-stop: always; /* don't skip more than one card per swipe */
+    border-radius: 0;
+    flex-shrink: 0;
+  }
+  
+  .alr-col h3 {
+    font-size: clamp(1.75rem, 4.5vw, 2.5rem);
+    margin-bottom: 24px;
+  }
+  
+  .alr-col p {
+    font-size: 18px;
+    max-width: 500px;
+    margin-bottom: 48px;
+  }
+  
+  .alr-btn {
+    padding: 24px 48px;
+    font-size: 20px;
+    bottom: 15%;
+  }
+}
+
+/* ALR Slider styles - используется в contentPanel */
+.alr-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-primary);
+  z-index: 4;
+  clip-path: inset(100% 0 0 0);
+  will-change: clip-path;
+}
+
+/* Шторка для боковых карточек */
+.alr-shutter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-primary);
+  z-index: var(--alr-z-overlay);
+  pointer-events: none;
+  will-change: clip-path;
+}
+/* Внутренний контент в шторке: воздух по краям, кнопка ниже */
+.alr-shutter > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: 100%;
+  padding: calc(var(--index) * 3) calc(var(--index) * 2.5);
+  box-sizing: border-box;
+}
+/* Одна вдавленная подложка: чуть пошире и повыше */
+.alr-shutter-text-box {
+  width: 100%;
+  max-width: 440px;
+  padding: 2.25rem 2.5rem;
+  box-sizing: border-box;
+  background: var(--color-primary);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+  text-align: center;
+  /* Мягкие внутренние тени, обе тёмные (как в переменных вдавленности) */
+  box-shadow:
+    inset 5px 5px 22px #1e1e22,
+    inset -5px -5px 22px #1e1e22;
+}
+.alr-shutter-text-box h3 {
+  margin: 0 0 1rem;
+  padding: 0;
+  background: none;
+  font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+  color: var(--color-text-primary);
+}
+.alr-shutter-text-box p {
+  margin: 0 auto;
+  padding: 0;
+  max-width: 100%;
+  background: none;
+  box-shadow: none;
+  border: none;
+  font-size: clamp(0.72rem, 1vw, 0.85rem);
+  line-height: 1.75;
+  color: var(--color-text-secondary);
+  text-align: center !important;
+}
+/* Кнопка «Назад» без теней, на 3px ниже */
+.alr-shutter .alr-btn {
+  margin-top: auto;
+  margin-bottom: 0;
+  flex-shrink: 0;
+  transform: translateY(calc(1.5rem + 3px));
+  box-shadow: none;
+}
+.alr-shutter .alr-btn:hover {
+  box-shadow: none;
+}
+.alr-shutter .alr-btn:active {
+  box-shadow: none;
+}
+
+/* Панель контента для боковых карточек (скругление углов как у модалки) */
+.alr-content-panel {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  z-index: var(--alr-z-content);
+  background: var(--color-primary);
+  pointer-events: auto;
+  will-change: transform;
+  overflow: hidden;
+  border-radius: 0 0 var(--alr-border-radius-large) var(--alr-border-radius-large);
+}
+/* Во время синхронизированной анимации скрываем границы для исчезновения шва */
+.alr-animating .alr-col,
+.alr-animating .alr-content-panel {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.alr-slider-content {
+  padding: 40px;
+  padding-top: 84px; /* 56px + 28px (половина высоты кнопки) — слайдер чуть ниже */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+}
+/* Закрепляем контент к краю шва, чтобы визуальная ширина не "плавала" при раскрытии */
+.alr-content-panel.align-left .alr-slider-content { align-items: flex-start; }
+.alr-content-panel.align-right .alr-slider-content { align-items: flex-end; }
+
+.alr-slider .slider-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  flex: 1;
+  min-height: 353px;
+  overflow: hidden;
+  border-radius: var(--alr-border-radius);
+  padding-left: 14px;
+  padding-right: 14px;
+  box-sizing: content-box;
+}
+.alr-slider .slider-container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(141,90,151,0.45), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.slider-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.slider-item.active {
+  opacity: 1;
+}
+
+.alr-slider-image {
+  width: 100%;
+  max-width: 400px;
+  flex: 1;
+  min-height: 318px; /* −2% от 324px */
+  object-fit: cover;
+  border-radius: var(--alr-border-radius);
+  display: block;
+}
+
+.alr-slider-description {
+  flex-shrink: 0;
+}
+
+.alr-slider-nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  padding: 0 80px; /* 24px + 56px (ширина кнопки) — ближе к слайдеру */
+  z-index: 5;
+}
+
+.alr-slider-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 16px;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Нео: поднятый кружок, мягкий переход тени (большее размытие) */
+  box-shadow:
+    4px 4px 18px #1e1e22,
+    -4px -4px 18px #424248;
+  position: relative;
+  pointer-events: auto;
+  flex-shrink: 0;
+  z-index: 6;
+}
+.alr-slider-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border-top: 1px solid rgba(255,255,255,0.10);
+  border-left: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(0,0,0,0.35);
+  border-right: 1px solid rgba(0,0,0,0.20);
+  pointer-events: none;
+}
+.alr-slider-btn:hover {
+  color: var(--color-accent);
+  box-shadow:
+    5px 5px 20px #1e1e22,
+    -5px -5px 20px #424248;
+}
+.alr-slider-btn:active {
+  box-shadow:
+    inset 3px 3px 12px #1e1e22,
+    inset -3px -3px 12px #424248;
+  color: var(--color-accent);
+}
+.alr-slider-btn:active::before {
+  border-top: 1px solid rgba(0,0,0,0.35);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.alr-slider-description {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 400px;
+  margin-top: 16px;
+}
+/* Тонкий divider акцентного цвета между изображением и описанием, по краям — в прозрачность */
+.alr-slider-description::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin-bottom: 16px;
+  background: linear-gradient(90deg, transparent 0%, var(--color-accent) 15%, var(--color-accent) 85%, transparent 100%);
+  flex-shrink: 0;
+}
+
+/* Desktop: изображение, текст, кнопки навигации — по порядку, слайдер по центру, чуть ниже */
+@media (min-width: 769px) {
+  .alr-slider-content {
+    padding: 64px 32px 36px; /* padding-top 64px (36+28) — слайдер чуть ниже на полкнопки */
+    align-items: center;
+    justify-content: center;
+  }
+  .alr-slider .slider-container {
+    width: 100%;
+    max-width: none;
+    flex: 1;
+    min-height: 423px; /* −2% от 432px */
+    border-radius: 16px;
+    padding-left: 20px;
+    padding-right: 20px;
+    box-sizing: content-box;
+  }
+  .slider-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0;
+  }
+  .alr-slider-image {
+    width: 65%;
+    flex: 1;
+    min-height: 353px; /* −2% от 360px */
+    max-width: none;
+    object-fit: cover;
+    border-radius: 16px;
+  }
+  .alr-slider-description {
+    margin-top: 16px;
+    width: 68%;
+    max-width: none;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .alr-slider-content .alr-slider-nav {
+    margin-top: 0;
+    padding: 0 88px; /* 32px + 56px — ближе к слайдеру на ширину кнопок */
+  }
+  .alr-slider-btn {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+/* .alr-slider-close removed - unused class */
+
+/* Reviews carousel */
+.alr-reviews-carousel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-primary);
+  z-index: 4;
+  /* ранее использовалась маска clip-path; в простом режиме показываем сразу */
+}
+
+.alr-reviews-content {
+  padding: 40px 40px 24px;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  grid-template-columns: 1fr;
+  align-items: stretch;
+  position: relative;
+  gap: 0;
+}
+
+.alr-reviews-rows { 
+  position: relative;
+  width: 100vw; 
+  max-width: 100vw; 
+  margin-left: calc(50% - 50vw); 
+  margin-right: calc(50% - 50vw); 
+  display: grid; 
+  grid-template-rows: auto auto; 
+  gap: 18px;
+  align-content: center;
+  min-height: 0;
+}
+.alr-reviews-row { 
+  width: 100%; 
+  overflow: hidden; 
+  position: relative;
+}
+.alr-reviews-track { 
+  display: flex; 
+  gap: 24px; 
+  will-change: transform;
+  width: max-content;
+  flex-shrink: 0;
+}
+
+.alr-review-item {
+  width: 400px;
+  background: var(--color-primary);
+  padding: 28px 24px;
+  border-radius: 14px;
+  text-align: center;
+  border: none;
+  position: relative;
+  /* Нео: поднятая карточка — мягкие тени, слева/сверху тоже тёмные */
+  box-shadow: 3px 3px 10px #1e1e22, -3px -3px 10px #1e1e22;
+}
+/* Объёмная рамка */
+.alr-review-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  border-top: 1px solid rgba(255,255,255,0.10);
+  border-left: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(0,0,0,0.35);
+  border-right: 1px solid rgba(0,0,0,0.20);
+  pointer-events: none;
+}
+
+.alr-review-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  font-size: 28px;
+  margin-bottom: 10px;
+  box-shadow: var(--neo-inset-sm);
+  border: none;
+}
+
+.alr-review-stars {
+  color: #f6c343;
+  letter-spacing: 2px;
+  margin: 8px 0 14px 0;
+}
+
+.alr-review-text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.alr-review-author {
+  font-weight: 600;
+  color: var(--color-accent);
+  font-size: 14px;
+}
+
+/* Планшеты в горизонтальной ориентации - уменьшенные карточки отзывов */
+@media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
+  .alr-review-item {
+    width: 320px;
+    padding: 20px 18px;
+    border-radius: 12px;
+  }
+  
+  .alr-review-avatar {
+    width: 56px;
+    height: 56px;
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  
+  .alr-review-text {
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+  
+  .alr-review-author {
+    font-size: 12px;
+  }
+  
+  .alr-review-stars {
+    font-size: 14px;
+    margin: 6px 0 10px 0;
+  }
+}
+
+/* Нижний блок: кнопки «Назад» и «Оставить отзыв» — в строчку по центру */
+.alr-reviews-footer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  padding-top: 20px;
+  margin: 0 auto;
+  width: 100%;
+}
+.alr-reviews-back {
+  position: relative;
+  bottom: auto;
+  left: auto;
+  transform: none;
+}
+.alr-reviews-back:hover {
+  transform: translateY(-2px);
+}
+.alr-reviews-leave {
+  opacity: 0.8;
+  cursor: not-allowed;
+  pointer-events: none; /* события идут на wrap */
+}
+
+/* Обёртка кнопки «Оставить отзыв» (десктоп и мобильная карусель) */
+.alr-reviews-leave-wrap {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  cursor: default;
+}
+.alr-reviews-leave-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  cursor: default;
+}
+/* ── Tooltip: fixed-элемент создаётся JS при hover/tap ── */
+.alr-tip {
+  position: fixed;
+  padding: 7px 13px;
+  background: rgba(22, 20, 28, 0.97);
+  color: rgba(230, 220, 240, 0.95);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  border-radius: 8px;
+  border: 1px solid rgba(141, 90, 151, 0.4);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.alr-tip.alr-tip--visible {
+  opacity: 1;
+}
+.alr-leave-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.alr-leave-icon {
+  flex-shrink: 0;
+}
+
+/* В колонку только на узких экранах */
+@media (max-width: 400px) {
+  .alr-reviews-footer {
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 16px;
+  }
+  .alr-reviews-back,
+  .alr-reviews-leave {
+    width: 100%;
+    max-width: 280px;
+  }
+}
+
+@keyframes bounceUp {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+/* Mobile modal styles */
+/* ═══════════════════════════════════════════════
+   ALR MOBILE MODAL — v3
+═══════════════════════════════════════════════ */
+.alr-mobile-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.alr-mobile-modal .modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  height: min(90vh, 680px);
+  background: var(--color-primary);
+  border: none;
+  border-radius: 20px;
+  /* Нео: глубоко поднятая модалка */
+  box-shadow:
+    8px 8px 20px #1a1a1e,
+    -8px -8px 20px #424248,
+    0 20px 60px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+/* Объёмная рамка модалки */
+.alr-mobile-modal .modal-content > .neo-frame,
+.alr-mobile-modal .modal-content::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  border-top: 1px solid rgba(255,255,255,0.10);
+  border-left: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(0,0,0,0.35);
+  border-right: 1px solid rgba(0,0,0,0.20);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Тонкая акцентная линия — по вертикали под серединой кнопки крестика (14px + 44/2 = 36px) */
+.alr-mobile-modal .modal-content::after {
+  content: '';
+  position: absolute;
+  top: 36px;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(141,90,151,0.45), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Крестик (непрозрачный фон, чтобы линия не просвечивала) ── */
+.alr-mobile-modal .alr-modal-close {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 12;
+  flex-shrink: 0;
+  transition: box-shadow 0.18s ease, color 0.18s ease;
+  padding: 0;
+  /* Нео: поднятый непрозрачный кружок */
+  box-shadow: var(--neo-raised-sm);
+}
+/* Cross lines via ::before/::after — frame via box-shadow border trick only */
+/* SVG крестик через псевдоэлементы — тонкий */
+.alr-mobile-modal .alr-modal-close::before,
+.alr-mobile-modal .alr-modal-close::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 1.5px;
+  background: rgba(200, 165, 215, 0.75);
+  border-radius: 1px;
+  top: 50%;
+  left: 50%;
+  margin-top: -0.75px;
+  margin-left: -7px;
+}
+.alr-mobile-modal .alr-modal-close::before { transform: rotate(45deg); }
+.alr-mobile-modal .alr-modal-close::after  { transform: rotate(-45deg); }
+.alr-mobile-modal .alr-modal-close:hover {
+  box-shadow: var(--neo-inset-sm);
+  color: var(--color-accent);
+}
+.alr-mobile-modal .alr-modal-close:active {
+  box-shadow: var(--neo-inset);
+}
+
+/* ── Тело модалки (скругление внутрь, отступ по низу под панель) ── */
+.alr-mobile-modal .modal-body {
+  padding: 58px 22px 16px; /* 36px линия + отступ; снизу небольшой отступ */
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  z-index: 1;
+  border-radius: 0 0 20px 20px;
+  overflow: hidden;
+}
+
+/* Заголовок карточки (снаружи): по вертикали по центру своей зоны на мобильных */
+.alr-mobile-modal h2 {
+  text-align: center;
+  margin: 0 0 20px;
+  color: #f0eaf5;
+  font-size: clamp(1.4rem, 5vw, 1.85rem);
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  line-height: 1;
+  flex-shrink: 0;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Слайдер ── */
+.mobile-slider {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.mobile-slider-wrapper {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  border-radius: 0 0 16px 16px;
+}
+
+/* Каждый слайд — колонка: изображение сверху, описание снизу, без наложения */
+.mobile-slider-item {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* Фиксированная высота под изображение, чтобы не схлопывалось и текст не заезжал на кнопки */
+.mobile-slider-container {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 353px; /* −2% от 360px */
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--color-primary);
+  box-shadow: var(--neo-inset-sm);
+}
+/* Слайды отзывов: особая логика — активный слайд в потоке, заглушка на всю высоту; далее — фикс. высота от верха блока до верхнего края панели и внутренний скролл (без скроллбара, с шеврон-подсказкой) */
+.alr-mobile-modal .mobile-slider-wrapper:has(.mobile-review-card) {
+  flex: 0 1 auto;
+  min-height: 353px;
+}
+.alr-mobile-modal .mobile-slider-container:has(.mobile-review-card) {
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.alr-mobile-modal .mobile-slider-container:has(.mobile-review-card)::-webkit-scrollbar {
+  display: none;
+}
+.alr-mobile-modal .mobile-slider-container:has(.mobile-review-card) .mobile-review-card {
+  min-height: 100%;
+  height: auto;
+  box-sizing: border-box;
+}
+.alr-mobile-modal .mobile-slider-container:has(.mobile-review-card) .mobile-review-text {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Единая панель отзывов: в самом низу модалки, навигация и кнопка одной высоты */
+.alr-mobile-reviews-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-bottom: 14px;
+  flex-shrink: 0;
+}
+/* Обёртка и оверлей кнопки «Оставить отзыв» — оверлей принимает тап/клик и наведение (подсказка) */
+.alr-mobile-reviews-panel .alr-reviews-leave-wrap {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  cursor: default;
+}
+.alr-mobile-reviews-panel .alr-reviews-leave-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  cursor: default;
+}
+/* tooltip теперь через глобальный .alr-reviews-leave-overlay::after */
+@keyframes alr-tooltip-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+/* Кнопка «Оставить отзыв» — по высоте как навигация (46px), ширина под текст, в одну строчку с навигацией */
+.alr-mobile-reviews-panel .alr-reviews-leave {
+  height: 46px;
+  min-height: 46px;
+  padding: 0 20px;
+  font-size: 0.8125rem;
+  min-width: 180px;
+  max-width: 220px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.alr-mobile-reviews-panel .alr-leave-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.alr-mobile-reviews-panel .mobile-slider-btn {
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+}
+/* Серый разделитель по низу фото (как сверху) */
+.mobile-slider-container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(141,90,151,0.45), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.mobile-slider-container .mobile-slider-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+}
+
+.mobile-slider-description {
+  text-align: center;
+  color: rgba(190, 165, 210, 0.75);
+  font-size: 13px;
+  line-height: 1.55;
+  margin-top: 14px;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+
+/* ── Навигация — своё место под текстом слайда ── */
+.mobile-slider-nav {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 18px;
+  flex-shrink: 0;
+}
+
+.mobile-slider-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Нео: поднятый кружок */
+  box-shadow: var(--neo-raised-sm);
+  transition: box-shadow 0.15s ease, color 0.2s ease;
+  flex-shrink: 0;
+  position: relative;
+}
+/* Объёмная рамка */
+.mobile-slider-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border-top: 1px solid rgba(255,255,255,0.10);
+  border-left: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(0,0,0,0.35);
+  border-right: 1px solid rgba(0,0,0,0.20);
+  pointer-events: none;
+}
+.mobile-slider-btn:hover {
+  color: var(--color-accent);
+  box-shadow: var(--neo-raised-xs),
+    4px 4px 10px #1e1e22,
+    -4px -4px 10px #424248;
+}
+.mobile-slider-btn:active {
+  box-shadow: var(--neo-inset-sm);
+  color: var(--color-accent);
+}
+.mobile-slider-btn:active::before {
+  border-top: 1px solid rgba(0,0,0,0.35);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ── Карточки отзывов ── */
+.mobile-review-card {
+  width: 100%;
+  height: 100%;
+  background: var(--color-primary);
+  border: none;
+  border-radius: 12px;
+  padding: clamp(14px, 4vw, 20px);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  /* Мягкие тени, слева/сверху тоже тёмные */
+  box-shadow: 2px 2px 7px #1e1e22, -2px -2px 7px #1e1e22;
+}
+
+.mobile-review-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(141, 90, 151, 0.1);
+  flex-shrink: 0;
+}
+
+.mobile-review-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mobile-review-avatar {
+  width: 34px;
+  height: 34px;
+  background: rgba(141, 90, 151, 0.15);
+  border-radius: 50%;
+  border: 1px solid rgba(141, 90, 151, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+  color: rgba(180, 140, 210, 0.6);
+}
+
+.mobile-review-author {
+  font-size: 14px;
+  color: rgba(200, 170, 220, 0.9);
+  font-weight: 500;
+  margin: 0;
+}
+
+.mobile-review-stars {
+  color: #f0b840;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.mobile-review-text {
+  font-size: clamp(13px, 3.8vw, 15px);
+  line-height: 1.65;
+  color: rgba(225, 210, 238, 0.82);
+  font-style: italic;
+  margin: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  padding: 4px 2px;
+}
+
+/* Футер отзывов (отдельный блок — не используется в мобильной модалке отзывов; кнопка в .alr-mobile-reviews-panel) */
+.alr-mobile-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 16px;
+  flex-shrink: 0;
+}
+
+.alr-mobile-modal .alr-reviews-leave {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Адаптив ── */
+@media (max-width: 390px) {
+  .alr-mobile-modal { padding: 12px; }
+  .alr-mobile-modal .modal-content { height: min(92vh, 600px); }
+  .alr-mobile-modal .modal-body { padding: 58px 18px 16px; }
+  .alr-mobile-modal h2 { font-size: 1.25rem; }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .alr-mobile-modal .modal-content {
+    max-width: 500px;
+    height: min(85vh, 720px);
+  }
+  .mobile-slider-btn { width: 52px; height: 52px; }
+}
+
+@media (min-width: 1024px) {
+  .alr-mobile-modal .modal-content {
+    max-width: 520px;
+    height: min(82vh, 740px);
+  }
+}
+
+
+/* ALR Modals */
+.modal { 
+  display: none; 
+  position: fixed; 
+  z-index: 1000; 
+  left: 0; 
+  top: 0; 
+  width: 100%; 
+  height: 100%; 
+  background-color: rgba(0,0,0,0.45); 
+  backdrop-filter: blur(8px);
+}
+.modal-content { 
+  background: linear-gradient(
+    155deg,
+    rgba(52,52,60,1) 0%,
+    var(--color-bg-lighter) 45%,
+    rgba(34,34,40,1) 100%
+  );
+  margin: 5% auto; 
+  padding: 0; 
+  border-radius: 20px; 
+  width: 90%; 
+  max-width: 800px; 
+  max-height: 80vh; 
+  overflow-y: auto;
+  position: relative;
+  border: 0.5px solid rgba(255,255,255,0.06);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.06) inset,
+    0 -1px 0 rgba(0,0,0,0.3) inset,
+    0 8px 24px rgba(0,0,0,0.5),
+    0 24px 64px rgba(0,0,0,0.38),
+    0 48px 96px rgba(0,0,0,0.25);
+}
+.modal-close { 
+  cursor: pointer; 
+  position: absolute; 
+  top: 20px; 
+  right: 24px; 
+  z-index: 1001;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.25);
+  border: 0.5px solid rgba(255,255,255,0.07);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.4),
+    inset 0 -1px 0 rgba(255,255,255,0.03);
+  transition: all 0.18s ease;
+}
+.modal-close:hover {
+  color: var(--color-text-primary);
+  background: rgba(141,90,151,0.2);
+  border-color: rgba(141,90,151,0.3);
+}
+.modal-content h2 { 
+  padding: 40px 40px 20px; 
+  margin: 0; 
+  font-size: 32px; 
+  font-weight: 400; 
+  color: var(--color-text-primary); 
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.modal-body { 
+  padding: 20px 40px 40px; 
+}
+
+/* Award Items */
+.award-item { 
+  display: flex; 
+  align-items: flex-start; 
+  gap: 20px; 
+  padding: 24px 0; 
+  border-bottom: 1px solid rgba(255,255,255,0.05); 
+}
+.award-item:last-child { 
+  border-bottom: none; 
+}
+.award-icon { 
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent);
+  /* Вдавленная иконка */
+  background: rgba(0,0,0,0.25);
+  border: 0.5px solid rgba(141,90,151,0.2);
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.4),
+    inset 0 -1px 0 rgba(141,90,151,0.06);
+}
+.award-text h4 { 
+  margin: 0 0 8px; 
+  font-size: 18px; 
+  font-weight: 400; 
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-primary); 
+}
+.award-text p { 
+  margin: 0; 
+  color: var(--color-text-muted); 
+  line-height: 1.5; 
+}
+
+/* License Items */
+.license-item { 
+  padding: 24px 0; 
+  border-bottom: 1px solid rgba(255,255,255,0.05); 
+}
+.license-item:last-child { 
+  border-bottom: none; 
+}
+.license-item h4 { 
+  margin: 0 0 12px; 
+  font-size: 18px; 
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-primary); 
+}
+.license-item p { 
+  margin: 4px 0; 
+  color: var(--color-text-muted); 
+  font-size: 14px; 
+}
+
+/* Review Items */
+.review-item { 
+  padding: 24px 0; 
+  border-bottom: 1px solid var(--color-border-light); 
+}
+.review-item:last-child { 
+  border-bottom: none; 
+}
+.review-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 12px; 
+}
+.review-author strong { 
+  font-size: 16px; 
+  color: var(--color-text-primary); 
+}
+.review-rating { 
+  font-size: 13px;
+  color: var(--color-accent);
+  letter-spacing: 2px;
+  margin-top: 4px; 
+}
+.review-date { 
+  font-size: 14px; 
+  color: var(--color-text-muted); 
+}
+.review-item p { 
+  margin: 0; 
+  color: var(--color-text-muted); 
+  line-height: 1.6; 
+  font-style: italic; 
+}

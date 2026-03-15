@@ -1,0 +1,126 @@
+/* ============================================
+   Sunken Sections — утопленные текстовые секции
+   Sterile Techno-Minimalism: глубокая ниша AO
+   ============================================ */
+
+.sunken-section {
+  position: relative;
+  width: 100%;
+  min-height: 34vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-darker, #1c1c20);
+  overflow: hidden;
+  z-index: 2;
+}
+
+/* Широкие экраны: фон секции чуть светлее (на пару тонов) */
+@media (min-width: 769px) {
+  .sunken-section {
+    background: #2b2b30;
+  }
+}
+
+/* Глубокая AO-ниша — тени по всему периметру создают ощущение углубления */
+.sunken-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    /* верх — сильная контактная тень (секция "вдавлена" снизу блока выше) */
+    linear-gradient(to bottom,
+      rgba(0,0,0,0.55)  0%,
+      rgba(0,0,0,0.18) 18%,
+      rgba(0,0,0,0.04) 40%,
+      rgba(0,0,0,0.04) 60%,
+      rgba(0,0,0,0.18) 82%,
+      rgba(0,0,0,0.55) 100%
+    ),
+    /* боковые AO */
+    linear-gradient(to right,  rgba(0,0,0,0.28) 0%, transparent 20%),
+    linear-gradient(to left,   rgba(0,0,0,0.28) 0%, transparent 20%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Верхняя световая кромка — имитирует отражение от верхнего края углубления */
+.sunken-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 5%;
+  right: 5%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(255,255,255,0.06) 25%,
+    rgba(255,255,255,0.09) 50%,
+    rgba(255,255,255,0.06) 75%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Pattern layer — moved by JS parallax */
+.sunken-pattern-layer {
+  position: absolute;
+  inset: -30%;          /* oversized so parallax shift stays within */
+  background-image: url('../../img/bg-logo-pattern.JPG');
+  background-size: 300px;
+  background-repeat: repeat;
+  opacity: 0.028;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
+}
+
+.sunken-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 660px;
+  padding: 5rem 2.5rem;
+  text-align: center;
+}
+
+/* Eyebrow — small, wide, accent */
+.sunken-eyebrow {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.26em;
+  color: var(--color-accent, #8D5A97);
+  margin-bottom: 1.25rem;
+  opacity: 0.9;
+  display: block;
+}
+
+/* Main heading — large, light weight, tight leading */
+.sunken-heading {
+  font-size: clamp(1.3rem, 3vw, 2.2rem);
+  font-weight: 200;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-primary, #F5F0EB);
+  margin-bottom: 1.5rem;
+  line-height: 1.25;
+}
+
+/* Body — readable, relaxed */
+.sunken-body {
+  font-size: clamp(0.8rem, 1.1vw, 0.95rem);
+  line-height: 1.9;
+  color: var(--color-text-muted, #a0a0a6);
+  max-width: 500px;
+  margin: 0 auto;
+  letter-spacing: 0.02em;
+  font-weight: 300;
+  text-transform: none;
+}
+
+@media (max-width: 768px) {
+  .sunken-section { min-height: 28vh; }
+  .sunken-inner { padding: 3.5rem 1.5rem; }
+  .sunken-heading { font-size: clamp(1.1rem, 5vw, 1.5rem); }
+}
